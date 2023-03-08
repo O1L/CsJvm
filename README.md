@@ -7,6 +7,7 @@ Implemented most of opcodes, interpreter only yet. Program has a simple UI based
 Project includes:
  - Abstractions layer
  - Java bytecode disassembler (similar to javap)
+ - JAR and .class files loader
  - JVM-specific models layer
  - Java Virtual Machine implementation
  - CLI project to test and run simple applications
