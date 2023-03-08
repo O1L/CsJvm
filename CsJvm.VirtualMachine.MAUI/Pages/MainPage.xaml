@@ -1,0 +1,115 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:windows="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.WindowsSpecific;assembly=Microsoft.Maui.Controls"
+             x:Class="CsJvm.VirtualMachine.MAUI.Pages.MainPage"
+             Title="{Binding Title}">
+
+    
+    <Grid RowDefinitions="60,90*" ColumnDefinitions="640,*"  Padding="10">
+
+        <Grid Grid.Column="0" Grid.Row="0" ColumnDefinitions="*,*,*,*,*" Padding="0,0,0,10">
+
+            <Button Grid.Column="0" Style="{StaticResource DebuggerControlsButton}" Text="Go to address" />
+            <Button Grid.Column="1" Style="{StaticResource DebuggerControlsButton}" Text="Go to PC" />
+            <Button Grid.Column="2" Style="{StaticResource DebuggerControlsButton}" Text="Step into" Command="{Binding StepIntoCommand}" />
+            <Button Grid.Column="3" Style="{StaticResource DebuggerControlsButton}" Text="Step over" Command="{Binding StepOverCommand}" />
+            <Button Grid.Column="4" Style="{StaticResource DebuggerControlsButton}" Text="Pause" />
+
+        </Grid>
+
+        <Border Grid.Column="0" Grid.Row="1" HeightRequest="530" WidthRequest="630">
+            <ListView x:Name="OpcodesListView"  ItemsSource="{Binding Disasm.Opcodes}" SelectedItem="{Binding Disasm.CurrentOpcode, Mode=OneWay}" SelectionMode="Single">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <Label Text="{Binding .}" FontFamily="CourierNew"/>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Border>
+        
+        <Grid Grid.Column="1" Grid.Row="0" Padding="25,0,0,0" HorizontalOptions="Start">
+
+            <VerticalStackLayout>
+                <Label Text="{Binding Disasm.MethodName, StringFormat='Current method: {0}'}" />
+                <Label Text="{Binding Disasm.CurrentPc, StringFormat='Program counter: {0}'}" />
+                <Label Text="{Binding Disasm.CurrentOpcode.Mnemonic, StringFormat='Current opcode: {0}'}" />
+            </VerticalStackLayout>
+        </Grid>
+
+        <Grid Grid.Column="1" Grid.Row="1" Padding="0,0,0,0">
+
+            <Grid RowDefinitions="45*,45*,10*">
+
+                <Border Grid.Row="0" WidthRequest="550" HeightRequest="220">
+
+                    <StackLayout>
+                        <Label Text="{Binding Disasm.OperandStack.Length, StringFormat='Operand Stack [{0}]'}" Padding="5"/>
+                        <ListView ItemsSource="{Binding Disasm.OperandStack}" Margin="5" >
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <ViewCell>
+                                        <Grid ColumnDefinitions="15*,25*,60*">
+                                            <Label Grid.Column="0" Text="{Binding Index}" />
+                                            <Label Grid.Column="1" Text="{Binding TypeName}" />
+                                            <Label Grid.Column="2" Text="{Binding Value}" />
+                                        </Grid>
+                                    </ViewCell>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+
+                    </StackLayout>
+                </Border>
+
+                <Border Grid.Row="1" WidthRequest="550" HeightRequest="220">
+
+                    <StackLayout>
+
+                        <Label Text="{Binding Disasm.LocalVariables.Length, StringFormat='Local Variables [{0}]'}" Padding="5"/>
+                        <ListView ItemsSource="{Binding Disasm.LocalVariables}" Margin="10">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <ViewCell>
+                                        <Grid ColumnDefinitions="15*,25*,60*">
+                                            <Label Grid.Column="0" Text="{Binding Index}" />
+                                            <Label Grid.Column="1" Text="{Binding TypeName}" />
+                                            <Label Grid.Column="2" Text="{Binding Value}" />
+                                        </Grid>
+                                    </ViewCell>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+
+                    </StackLayout>
+                </Border>
+                
+
+                <StackLayout Grid.Row="2" Padding="25,0,0,0">
+
+                    <Label Text="{Binding Disasm.FramesCount, StringFormat='Frames stack size: {0}'}" />
+                    <Label Text="{Binding Disasm.PreviousMethodName, StringFormat='Previous method: {0}'}" />
+
+                </StackLayout>
+                
+            </Grid>
+            
+            
+        </Grid>
+        
+    </Grid>
+    
+
+    <!--<CollectionView ItemsSource="{Binding Opcodes}">
+        <CollectionView.ItemTemplate>
+            <DataTemplate>
+                <Label Text="{Binding .}" FontFamily="CourierNew"/>
+            </DataTemplate>
+        </CollectionView.ItemTemplate>
+    </CollectionView>-->
+    
+    
+
+</ContentPage>
