@@ -19,9 +19,9 @@ var host = Host.CreateDefaultBuilder(args)
     {
         services.AddLogging(x => x.AddConsole())
                 // loaders
-                .AddSingleton<IClassFileLoader, ClassFileLoader>()
-                .AddSingleton<IJavaClassLoader, JavaClassLoader>()
-                .AddSingleton<IJarLoader, JarLoader>()
+                .AddTransient<IClassFileLoader, ClassFileLoader>()
+                .AddTransient<IJavaClassLoader, JavaClassLoader>()
+                .AddTransient<IJarLoader, JarLoader>()
 
                 // disassembler
                 .AddTransient<IDisasmDescriptionProvider, DisasmDescriptionProvider>()
@@ -40,6 +40,7 @@ var host = Host.CreateDefaultBuilder(args)
 
                 // java machine
                 .AddSingleton<IJavaHeap, JavaHeap>()
+                .AddSingleton<IJavaExecutable, JavaExecutable>()
                 .AddSingleton<IJavaRuntime, JavaRuntime>()
                 .AddSingleton<IJavaMachine, JavaMachine>();
     })
@@ -52,7 +53,7 @@ var host = Host.CreateDefaultBuilder(args)
 
 using var jvm = host.Services.GetRequiredService<IJavaMachine>();
 //jvm.Load("D:/dev/TestJava/out/artifacts/TestJava_jar/TestJava.jar");
-jvm.Load("D:/dev/JVMTest/JVMTest/out/artifacts/JVMTest_jar/JVMTest.jar");
-jvm.Run();
+_ = await jvm.LoadAsync("D:/dev/JVMTest/JVMTest/out/artifacts/JVMTest_jar/JVMTest.jar");
+await jvm.RunAsync();
 
 await host.RunAsync();

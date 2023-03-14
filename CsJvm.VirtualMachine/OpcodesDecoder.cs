@@ -38,7 +38,7 @@ namespace CsJvm.VirtualMachine
         }
 
         /// <inheritdoc/>
-        public void Execute(IJavaThread thread)
+        public Task ExecuteAsync(IJavaThread thread)
         {
             // fetch opcode
             var opcode = thread.CurrentMethod.Code[thread.ProgramCounter];
@@ -49,7 +49,7 @@ namespace CsJvm.VirtualMachine
             // call the opcode
             try
             {
-                _opcodes[opcode].Method.Invoke(_opcodesImpl, new object[] { thread });
+                return (Task)_opcodes[opcode].Method.Invoke(_opcodesImpl, new object[] { thread })!;
             }
             catch (Exception ex)
             {

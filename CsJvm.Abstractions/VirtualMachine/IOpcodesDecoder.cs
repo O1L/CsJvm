@@ -9,6 +9,6 @@
         /// Executes single opcode
         /// </summary>
         /// <param name="thread">Thread to execute</param>
-        void Execute(IJavaThread thread);
+        Task ExecuteAsync(IJavaThread thread);
     }
 }

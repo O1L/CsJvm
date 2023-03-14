@@ -12,8 +12,7 @@ namespace CsJvm.Abstractions.Loader
         /// </summary>
         /// <param name="stream">Stream to load</param>
         /// <param name="className">Class name</param>
-        /// <param name="javaClass">Result class</param>
-        /// <returns><see langword="true"></see> if success; otherwise <see langword="false"></see></returns>
-        bool TryLoad(Stream stream, string className, out JavaClass? javaClass);
+        /// <returns>Loaded java class instance</returns>
+        Task<JavaClass?> LoadAsync(Stream stream, string className);
     }
 }

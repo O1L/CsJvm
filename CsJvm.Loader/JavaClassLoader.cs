@@ -31,33 +31,28 @@ namespace CsJvm.Loader
             _loader = loader;
         }
 
-        /// <summary>
-        /// Loads <see cref="JavaClass"/> from stream
-        /// </summary>
-        /// <param name="stream">Stream to load</param>
-        /// <returns>Loaded <see cref="JavaClass"/> instance</returns>
-        public bool TryLoad(Stream stream, string className, out JavaClass? javaClass)
+        /// <inheritdoc/>
+        public async Task<JavaClass?> LoadAsync(Stream stream, string className)
         {
-            javaClass = null;
-
             using var reader = new BinaryReader(stream);
-            if (!_loader.TryLoad(reader, out var classFile) || classFile == null)
-                return false;
+            var classFile = await _loader.LoadAsync(reader);
+            if (classFile == null)
+                return null;
 
             try
             {
-                javaClass = new JavaClass(className, classFile)
+                var javaClass = new JavaClass(className, classFile)
                     .ParseMethods()
                     .ParseFields()
                     .ParseAttributes()
                     .ParseSuperclass();
 
-                return true;
+                return javaClass;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Cannot load class {className}", className);
-                return false;
+                return null;
             }
         }
     }

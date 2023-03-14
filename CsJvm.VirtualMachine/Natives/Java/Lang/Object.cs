@@ -1,5 +1,4 @@
-﻿using CsJvm.Abstractions.Loader;
-using CsJvm.Abstractions.VirtualMachine;
+﻿using CsJvm.Abstractions.VirtualMachine;
 using CsJvm.Models;
 using CsJvm.Models.Heap;
 using CsJvm.VirtualMachine.Attributes;
@@ -12,9 +11,9 @@ namespace CsJvm.VirtualMachine.Natives.Java.Lang
     public class Object : INativeCall
     {
         /// <summary>
-        /// Jar loader
+        /// Executable jar loader
         /// </summary>
-        private readonly IJarLoader _loader;
+        private readonly IJavaExecutable _executable;
 
         /// <summary>
         /// Java runtime
@@ -29,12 +28,12 @@ namespace CsJvm.VirtualMachine.Natives.Java.Lang
         /// <summary>
         /// Ctor
         /// </summary>
-        /// <param name="loader">Jar loader</param>
+        /// <param name="executable">Executable jar loader</param>
         /// <param name="runtime">Java runtime</param>
         /// <param name="heap">Java heap</param>
-        public Object(IJarLoader loader, IJavaRuntime runtime, IJavaHeap heap)
+        public Object(IJavaExecutable executable, IJavaRuntime runtime, IJavaHeap heap)
         {
-            _loader = loader;
+            _executable = executable;
             _runtime = runtime;
             _heap = heap;
         }
@@ -54,12 +53,14 @@ namespace CsJvm.VirtualMachine.Natives.Java.Lang
             if (!_heap.TryGetClass(classRef, out var javaClass) || javaClass == null)
                 throw new NullReferenceException(nameof(javaClass));
 
-            if (!TryResolveClass("java/lang/Class", out var classClass) || classClass == null)
+            throw new NotImplementedException();
+
+            /*if (!TryResolveClass("java/lang/Class", out var classClass) || classClass == null)
                 throw new NullReferenceException(nameof(classClass));
 
             var classClassRef = _heap.CreateClassRef(classClass);
 
-            thread.CurrentMethod.OperandStack.Push(classClassRef);
+            thread.CurrentMethod.OperandStack.Push(classClassRef);*/
         }
 
         [JavaNative("java/lang/Object", "hashCode", "()I")]
@@ -90,13 +91,12 @@ namespace CsJvm.VirtualMachine.Natives.Java.Lang
         /// </summary>
         /// <param name="className">Class name</param>
         /// <param name="javaClass">resolved class</param>
-        private bool TryResolveClass(string className, out JavaClass? javaClass)
+        private async Task<JavaClass?> TryResolveClass(string className)
         {
-            if (_loader.TryGetClass(className, out javaClass) || _runtime.TryGet(className, out javaClass))
-                return true;
+            var javaClass = await _executable.GetClassAsync(className);
+            javaClass ??= await _runtime.GetClassAsync(className);
 
-            javaClass = null;
-            return false;
+            return javaClass;
         }
 
     }

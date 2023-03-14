@@ -1,5 +1,4 @@
 ﻿using CsJvm.Abstractions.Disasm;
-using CsJvm.Abstractions.Loader;
 using CsJvm.Abstractions.VirtualMachine;
 using CsJvm.VirtualMachine.MAUI.Models;
 using FreshMvvm.Maui;
@@ -12,7 +11,6 @@ namespace CsJvm.VirtualMachine.MAUI.PageModels
     {
         public string Title => "Main title";
 
-        private readonly IJarLoader _loader;
         private readonly IDisasm _disasm;
         private readonly IJavaMachine _machine;
 
@@ -23,16 +21,22 @@ namespace CsJvm.VirtualMachine.MAUI.PageModels
 
         public int SelectedIndex { get; private set; }
 
-        public MainPageModel(IJarLoader loader, IDisasm disasm, IJavaMachine machine)
+        public MainPageModel(IDisasm disasm, IJavaMachine machine)
         {
-            _loader = loader;
             _disasm = disasm;
             _machine = machine;
 
-            _machine.Load("tests/JVMTest.jar");
+            Task.Run(Load);
+        }
+
+        private async Task Load()
+        {
+            var success = await _machine.LoadAsync("D:/dev/JVMTest/JVMTest/out/artifacts/JVMTest_jar/JVMTest.jar");
+            if (!success)
+                return;
 
             _currentFrame = _machine.MainThread.CurrentMethod;
-            var asm = disasm.GetOpcodes(_machine.MainThread.CurrentMethod.Code, _machine.MainThread.CurrentMethod.CpInfo);
+            var asm = _disasm.GetOpcodes(_machine.MainThread.CurrentMethod.Code, _machine.MainThread.CurrentMethod.CpInfo);
 
             Disasm = new()
             {
@@ -56,17 +60,19 @@ namespace CsJvm.VirtualMachine.MAUI.PageModels
                     Value = "null"
                 }).ToArray()
             };
+
+            //UpdateView();
         }
 
-        public ICommand StepIntoCommand => new Command(() =>
+        public ICommand StepIntoCommand => new Command(async () =>
         {
-            _machine.StepInto();
+            await _machine.StepIntoAsync();
             UpdateView();
         });
 
-        public ICommand StepOverCommand => new Command(() =>
+        public ICommand StepOverCommand => new Command(async () =>
         {
-            _machine.StepOver();
+            await _machine.StepOverAsync();
             UpdateView();
         });
 

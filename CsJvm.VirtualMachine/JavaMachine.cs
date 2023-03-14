@@ -1,5 +1,4 @@
-﻿using CsJvm.Abstractions.Loader;
-using CsJvm.Abstractions.VirtualMachine;
+﻿using CsJvm.Abstractions.VirtualMachine;
 using CsJvm.Models;
 using Microsoft.Extensions.Logging;
 
@@ -16,9 +15,9 @@ namespace CsJvm.VirtualMachine
         private readonly ILogger _logger;
 
         /// <summary>
-        /// Jar loader
+        /// Executable jar loader
         /// </summary>
-        private readonly IJarLoader _loader;
+        private readonly IJavaExecutable _executable;
 
         /// <summary>
         /// Opcodes decoder
@@ -47,58 +46,52 @@ namespace CsJvm.VirtualMachine
         /// Ctor
         /// </summary>
         /// <param name="logger">Main logger</param>
-        /// <param name="loader">Jar loader</param>
+        /// <param name="executable">Executable jar loader</param>
         /// <param name="decoder">Opcodes decoder</param>
-        public JavaMachine(ILogger<JavaMachine> logger, IJarLoader loader, IOpcodesDecoder decoder)
+        public JavaMachine(ILogger<JavaMachine> logger, IJavaExecutable executable, IOpcodesDecoder decoder)
         {
             _logger = logger;
-            _loader = loader;
+            _executable = executable;
             _decoder = decoder;
         }
 
         /// <inheritdoc/>
-        public void Load(string path)
+        public async Task<bool> LoadAsync(string path)
         {
-            if (!_loader.TryOpen(path))
-            {
-                _logger.LogCritical("Cannot open file as a JAR by path={path}", path);
-                return;
-            }
-
-            // looking for main class
-            var mainClassName = _loader.JAR?.Manifest.MainClass;
-            if (string.IsNullOrEmpty(mainClassName) || !_loader.TryGetClass(mainClassName, out var mainClass) || mainClass == null)
-            {
-                _logger.LogCritical("Cannot find main class!");
-                return;
-            }
+            if (!await _executable.LoadAsync(path))
+                return false;
 
             // looking for main method
-            if (!mainClass.Methods.TryGetValue("main:([Ljava/lang/String;)V", out var method)
+            if (_executable.MainClass == null
+                || !_executable.MainClass.Methods.TryGetValue("main:([Ljava/lang/String;)V", out var method)
                 || method == null
                 || method.CodeAttribute == null)
             {
                 _logger.LogCritical("Cannot find main method!");
-                return;
+                return false;
             }
 
             // creata a method frame
             _frame = new Frame
             {
                 Code = method.CodeAttribute.Code,
-                CpInfo = mainClass.ConstantPool,
+                CpInfo = _executable.MainClass.ConstantPool,
                 LocalVariables = new object[method.CodeAttribute.MaxLocals],
                 MethodName = method.Name
             };
 
             // create main thread
             _mainThread = new JavaThread(_decoder, _frame);
+            return true;
         }
 
         /// <inheritdoc/>
-        public void Run()
+        public Task RunAsync()
         {
-            _mainThread?.Run();
+            if (_mainThread == null)
+                return Task.CompletedTask;
+
+            return _mainThread.RunAsync();
         }
 
         /// <inheritdoc/>
@@ -108,10 +101,22 @@ namespace CsJvm.VirtualMachine
         public void Stop() => throw new NotImplementedException();
 
         /// <inheritdoc/>
-        public void StepInto() => _mainThread?.StepInto();
+        public Task StepIntoAsync()
+        {
+            if (_mainThread == null)
+                return Task.CompletedTask;
+
+            return _mainThread.StepIntoAsync();
+        }
 
         /// <inheritdoc/>
-        public void StepOver() => _mainThread?.StepOver();
+        public Task StepOverAsync()
+        {
+            if (_mainThread == null)
+                return Task.CompletedTask;
+
+            return _mainThread.StepOverAsync();
+        }
 
         /// <inheritdoc/>
         public void Dispose()
@@ -130,7 +135,7 @@ namespace CsJvm.VirtualMachine
                 return;
 
             if (disposing)
-                _loader?.Dispose();
+                _executable?.Dispose();
 
             _disposed = true;
         }

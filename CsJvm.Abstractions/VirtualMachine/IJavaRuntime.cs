@@ -11,8 +11,7 @@ namespace CsJvm.Abstractions.VirtualMachine
         /// Gets class from runtime
         /// </summary>
         /// <param name="className">Class name</param>
-        /// <param name="javaClass">Result reference</param>
-        /// <returns><see langword="true"></see> if success; otherwise <see langword="false"></see></returns>
-        bool TryGet(string className, out JavaClass? javaClass);
+        /// <returns>Loaded java class</returns>
+        Task<JavaClass?> GetClassAsync(string className);
     }
 }

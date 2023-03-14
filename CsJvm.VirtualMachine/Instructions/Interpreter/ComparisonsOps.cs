@@ -6,7 +6,7 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
     public partial class JvmInterpreter
     {
         [Opcode(0x94, "lcmp")]
-        public void Lcmp(IJavaThread thread)
+        public Task Lcmp(IJavaThread thread)
         {
             var value2 = Convert.ToInt64(thread.CurrentMethod.OperandStack.Pop());
             var value1 = Convert.ToInt64(thread.CurrentMethod.OperandStack.Pop());
@@ -16,10 +16,11 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
                       : -1;
 
             thread.CurrentMethod.OperandStack.Push(value);
+            return Task.CompletedTask;
         }
 
         [Opcode(0x95, "fcmpl")]
-        public void Fcmpl(IJavaThread thread)
+        public Task Fcmpl(IJavaThread thread)
         {
             var value2 = Convert.ToSingle(thread.CurrentMethod.OperandStack.Pop());
             var value1 = Convert.ToSingle(thread.CurrentMethod.OperandStack.Pop());
@@ -29,10 +30,11 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
                       : 1;
 
             thread.CurrentMethod.OperandStack.Push(value);
+            return Task.CompletedTask;
         }
 
         [Opcode(0x96, "fcmpg")]
-        public void Fcmpg(IJavaThread thread)
+        public Task Fcmpg(IJavaThread thread)
         {
             var value2 = Convert.ToSingle(thread.CurrentMethod.OperandStack.Pop());
             var value1 = Convert.ToSingle(thread.CurrentMethod.OperandStack.Pop());
@@ -42,10 +44,11 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
                       : -1;
 
             thread.CurrentMethod.OperandStack.Push(value);
+            return Task.CompletedTask;
         }
 
         [Opcode(0x97, "dcmpl")]
-        public void Dcmpl(IJavaThread thread)
+        public Task Dcmpl(IJavaThread thread)
         {
             var value2 = Convert.ToDouble(thread.CurrentMethod.OperandStack.Pop());
             var value1 = Convert.ToDouble(thread.CurrentMethod.OperandStack.Pop());
@@ -55,10 +58,11 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
                       : 1;
 
             thread.CurrentMethod.OperandStack.Push(value);
+            return Task.CompletedTask;
         }
 
         [Opcode(0x98, "dcmpg")]
-        public void Dcmpg(IJavaThread thread)
+        public Task Dcmpg(IJavaThread thread)
         {
             var value2 = Convert.ToDouble(thread.CurrentMethod.OperandStack.Pop());
             var value1 = Convert.ToDouble(thread.CurrentMethod.OperandStack.Pop());
@@ -68,117 +72,118 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
                       : -1;
 
             thread.CurrentMethod.OperandStack.Push(value);
+            return Task.CompletedTask;
         }
 
         [Opcode(0x99, "ifeq")]
-        public void Ifeq(IJavaThread thread)
+        public Task Ifeq(IJavaThread thread)
         {
             var value = Convert.ToInt32(thread.CurrentMethod.OperandStack.Pop());
-            IfCmp(value == 0, thread);
+            return IfCmp(value == 0, thread);
         }
 
         [Opcode(0x9a, "ifne")]
-        public void Ifne(IJavaThread thread)
+        public Task Ifne(IJavaThread thread)
         {
             var value = Convert.ToInt32(thread.CurrentMethod.OperandStack.Pop());
-            IfCmp(value != 0, thread);
+            return IfCmp(value != 0, thread);
         }
 
         [Opcode(0x9b, "iflt")]
-        public void Iflt(IJavaThread thread)
+        public Task Iflt(IJavaThread thread)
         {
             var value = Convert.ToInt32(thread.CurrentMethod.OperandStack.Pop());
-            IfCmp(value < 0, thread);
+            return IfCmp(value < 0, thread);
         }
 
         [Opcode(0x9c, "ifge")]
-        public void Ifge(IJavaThread thread)
+        public Task Ifge(IJavaThread thread)
         {
             var value = Convert.ToInt32(thread.CurrentMethod.OperandStack.Pop());
-            IfCmp(value >= 0, thread);
+            return IfCmp(value >= 0, thread);
         }
 
         [Opcode(0x9d, "ifgt")]
-        public void Ifgt(IJavaThread thread)
+        public Task Ifgt(IJavaThread thread)
         {
             var value = Convert.ToInt32(thread.CurrentMethod.OperandStack.Pop());
-            IfCmp(value > 0, thread);
+            return IfCmp(value > 0, thread);
         }
 
         [Opcode(0x9e, "ifle")]
-        public void Ifle(IJavaThread thread)
+        public Task Ifle(IJavaThread thread)
         {
             var value = Convert.ToInt32(thread.CurrentMethod.OperandStack.Pop());
-            IfCmp(value <= 0, thread);
+            return IfCmp(value <= 0, thread);
         }
 
         [Opcode(0x9f, "if_icmpeq")]
 
-        public void FfIcmpeq(IJavaThread thread)
+        public Task FfIcmpeq(IJavaThread thread)
         {
             var value2 = Convert.ToInt32(thread.CurrentMethod.OperandStack.Pop());
             var value1 = Convert.ToInt32(thread.CurrentMethod.OperandStack.Pop());
-            IfCmp(value1 == value2, thread);
+            return IfCmp(value1 == value2, thread);
         }
 
         [Opcode(0xa0, "if_icmpne")]
-        public void FfIcmpne(IJavaThread thread)
+        public Task FfIcmpne(IJavaThread thread)
         {
             var value2 = Convert.ToInt32(thread.CurrentMethod.OperandStack.Pop());
             var value1 = Convert.ToInt32(thread.CurrentMethod.OperandStack.Pop());
-            IfCmp(value1 != value2, thread);
+            return IfCmp(value1 != value2, thread);
         }
 
         [Opcode(0xa1, "if_icmplt")]
-        public void FfIcmplt(IJavaThread thread)
+        public Task FfIcmplt(IJavaThread thread)
         {
             var value2 = Convert.ToInt32(thread.CurrentMethod.OperandStack.Pop());
             var value1 = Convert.ToInt32(thread.CurrentMethod.OperandStack.Pop());
-            IfCmp(value1 < value2, thread);
+            return IfCmp(value1 < value2, thread);
         }
 
         [Opcode(0xa2, "if_icmpge")]
-        public void FfIcmpge(IJavaThread thread)
+        public Task FfIcmpge(IJavaThread thread)
         {
             var value2 = Convert.ToInt32(thread.CurrentMethod.OperandStack.Pop());
             var value1 = Convert.ToInt32(thread.CurrentMethod.OperandStack.Pop());
-            IfCmp(value1 >= value2, thread);
+            return IfCmp(value1 >= value2, thread);
         }
 
         [Opcode(0xa3, "if_icmpgt")]
-        public void FfIcmpgt(IJavaThread thread)
+        public Task FfIcmpgt(IJavaThread thread)
         {
             var value2 = Convert.ToInt32(thread.CurrentMethod.OperandStack.Pop());
             var value1 = Convert.ToInt32(thread.CurrentMethod.OperandStack.Pop());
-            IfCmp(value1 > value2, thread);
+            return IfCmp(value1 > value2, thread);
         }
 
         [Opcode(0xa4, "if_icmple")]
-        public void FfIcmple(IJavaThread thread)
+        public Task FfIcmple(IJavaThread thread)
         {
             var value2 = Convert.ToInt32(thread.CurrentMethod.OperandStack.Pop());
             var value1 = Convert.ToInt32(thread.CurrentMethod.OperandStack.Pop());
-            IfCmp(value1 <= value2, thread);
+            return IfCmp(value1 <= value2, thread);
         }
 
         [Opcode(0xa5, "if_acmpeq")]
-        public void IfAcmpeq(IJavaThread thread)
+        public Task IfAcmpeq(IJavaThread thread)
         {
             var value2 = thread.CurrentMethod.OperandStack.Pop();
             var value1 = thread.CurrentMethod.OperandStack.Pop();
 
-            IfCmp(value1!.Equals(value2), thread);
+            return IfCmp(value1!.Equals(value2), thread);
         }
 
         [Opcode(0xa6, "if_acmpne")]
-        public void IfAcmpne(IJavaThread thread)
+        public Task IfAcmpne(IJavaThread thread)
         {
             var value2 = thread.CurrentMethod.OperandStack.Pop();
             var value1 = thread.CurrentMethod.OperandStack.Pop();
-            IfCmp(!value1!.Equals(value2), thread);
+            return IfCmp(!value1!.Equals(value2), thread);
         }
 
-        private static void IfCmp(bool cond, IJavaThread thread)
+        private static Task IfCmp(bool cond, IJavaThread thread)
         {
             // -1 because ProgramCounter already updated
             var oldPC = thread.ProgramCounter - 1;
@@ -193,6 +198,8 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
             // set new PC
             if (cond)
                 thread.ProgramCounter = (uint)newPC;
+
+            return Task.CompletedTask;
         }
     }
 }

@@ -33,9 +33,9 @@ namespace CsJvm.VirtualMachine.MAUI
                 .AddLogging(configure => configure.AddDebug())
 
                 // loaders
-                .AddSingleton<IClassFileLoader, ClassFileLoader>()
-                .AddSingleton<IJavaClassLoader, JavaClassLoader>()
-                .AddSingleton<IJarLoader, JarLoader>()
+                .AddTransient<IClassFileLoader, ClassFileLoader>()
+                .AddTransient<IJavaClassLoader, JavaClassLoader>()
+                .AddTransient<IJarLoader, JarLoader>()
 
                 // disassembler
                 .AddTransient<IDisasmDescriptionProvider, DisasmDescriptionProvider>()
@@ -54,6 +54,7 @@ namespace CsJvm.VirtualMachine.MAUI
 
                 // java machine
                 .AddSingleton<IJavaHeap, JavaHeap>()
+                .AddSingleton<IJavaExecutable, JavaExecutable>()
                 .AddSingleton<IJavaRuntime, JavaRuntime>()
                 .AddSingleton<IJavaMachine, JavaMachine>()
 

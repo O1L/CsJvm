@@ -59,54 +59,56 @@ namespace CsJvm.Loader
         }
 
         /// <inheritdoc/>
-        public bool TryOpen(string path) => TryOpenJar(path, out _jarFile);
+        public async Task<bool> OpenAsync(string path)
+            => await OpenJarAsync(path) != null;
 
         /// <inheritdoc/>
-        public bool TryGetClass(string className, out JavaClass? javaClass)
+        public async Task<JavaClass?> GetClassAsync(string className)
         {
-            javaClass = null;
+            JavaClass? javaClass = null;
 
             // check if class not found in specified jar
             if (!_classFileEntries.TryGetValue(className, out var entry))
-                return false;
+                return null;
 
             // check already parsed class in cache
             if (!_classesCache.TryGetValue(className, out javaClass))
             {
                 // load class
                 using var stream = entry.Open();
-
-                if (stream == null || !_javaClassLoader.TryLoad(stream, className, out javaClass) || javaClass == null)
-                    return false;
+                javaClass = await _javaClassLoader.LoadAsync(stream, className);
+                if (stream == null || javaClass == null)
+                    return null;
             }
 
             // check and load super-class (recursively)
-            if (javaClass.SuperClass != null && TryGetClass(javaClass.SuperClass.Name, out var superClass))
+            if (javaClass.SuperClass != null)
             {
-                javaClass.SuperClass = superClass;
-                javaClass.SuperClass?.Implementations.Add(javaClass);
+                var superClass = await GetClassAsync(javaClass.SuperClass.Name);
+                if (superClass != null)
+                {
+                    javaClass.SuperClass = superClass;
+                    javaClass.SuperClass?.Implementations.Add(javaClass);
+                }
             }
 
             // update cache
             //_classesCache.TryAdd(className, javaClass);
 
-            return true;
+            return javaClass;
         }
 
         /// <summary>
         /// Open, parse and keep JAR file handle blocked
         /// </summary>
         /// <param name="path">File path</param>
-        /// <param name="jarFile">Parsed .jar file</param>
         /// <returns><see langword="true"></see> if jar found and loaded; otherwise <see langword="false"></see></returns>
-        private bool TryOpenJar(string path, out JarFile? jarFile)
+        private Task<JarFile?> OpenJarAsync(string path)
         {
-            jarFile = null;
-
             if (string.IsNullOrWhiteSpace(path) || !File.Exists(path) || !".jar".Equals(Path.GetExtension(path), StringComparison.OrdinalIgnoreCase))
             {
                 _logger.LogWarning("Cannot open .jar from path = '{path}'", path);
-                return false;
+                return Task.FromResult<JarFile?>(null);
             }
 
             try
@@ -115,15 +117,16 @@ namespace CsJvm.Loader
                 _archive = ZipFile.OpenRead(path);
 
                 // load only .class files
-                var entries = _archive.Entries.Where(e => e.FullName.EndsWith(".class", StringComparison.OrdinalIgnoreCase)).ToArray();
-
-                foreach (var entry in entries)
+                foreach (var entry in _archive.Entries)
                 {
+                    if (!entry.FullName.EndsWith(".class", StringComparison.OrdinalIgnoreCase))
+                        continue;
+
                     var className = Path.ChangeExtension(entry.FullName, null);
                     _classFileEntries[className] = entry;
                 }
 
-                jarFile = new JarFile
+                _jarFile = new JarFile
                 {
                     ClassFiles = _classFileEntries.Keys.ToArray()
                 };
@@ -131,17 +134,15 @@ namespace CsJvm.Loader
                 // read manifest data
                 using var stream = _archive.GetEntry("META-INF/MANIFEST.MF")?.Open();
                 if (stream == null)
-                    return false;
+                    return Task.FromResult<JarFile?>(null);
 
                 using var reader = new StreamReader(stream);
-                jarFile = jarFile.ParseManifest(reader);
-
-                return true;
+                return _jarFile.ParseManifestAsync(reader);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Failed to open jar file from path = '{path}'", path);
-                return false;
+                return Task.FromResult<JarFile?>(null);
             }
         }
 

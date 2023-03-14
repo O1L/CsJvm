@@ -1,5 +1,4 @@
-﻿using CsJvm.Abstractions.Loader;
-using CsJvm.Abstractions.VirtualMachine;
+﻿using CsJvm.Abstractions.VirtualMachine;
 using CsJvm.Models;
 using CsJvm.Models.Heap;
 using CsJvm.VirtualMachine.Attributes;
@@ -12,9 +11,9 @@ namespace CsJvm.VirtualMachine.Natives.Java.Lang
     public class Class : INativeCall
     {
         /// <summary>
-        /// Jar loader
+        /// Jar executable loader
         /// </summary>
-        private readonly IJarLoader _loader;
+        private readonly IJavaExecutable _executable;
 
         /// <summary>
         /// Java runtime
@@ -29,12 +28,12 @@ namespace CsJvm.VirtualMachine.Natives.Java.Lang
         /// <summary>
         /// Ctor
         /// </summary>
-        /// <param name="loader">Jar loader</param>
+        /// <param name="executable">Executable jar loader</param>
         /// <param name="runtime">Java runtime</param>
         /// <param name="heap">Java heap</param>
-        public Class(IJarLoader loader, IJavaRuntime runtime, IJavaHeap heap)
+        public Class(IJavaExecutable executable, IJavaRuntime runtime, IJavaHeap heap)
         {
-            _loader = loader;
+            _executable = executable;
             _runtime = runtime;
             _heap = heap;
         }
@@ -144,8 +143,8 @@ namespace CsJvm.VirtualMachine.Natives.Java.Lang
         /// <param name="javaClass">resolved class</param>
         private bool TryResolveClass(string className, out JavaClass? javaClass)
         {
-            if (_loader.TryGetClass(className, out javaClass) || _runtime.TryGet(className, out javaClass))
-                return true;
+            /*if (_executable.TryGet(className, out javaClass) || _runtime.TryGet(className, out javaClass))
+                return true;*/
 
             javaClass = null;
             return false;

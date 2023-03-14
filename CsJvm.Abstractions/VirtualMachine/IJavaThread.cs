@@ -41,7 +41,7 @@ namespace CsJvm.Abstractions.VirtualMachine
         /// Pushes new method and immediately run execution
         /// </summary>
         /// <param name="frame">Method to run</param>
-        void PushFrame(Frame frame);
+        Task PushFrameAsync(Frame frame);
 
         /// <summary>
         /// Pushes new native method and immediately run execution
@@ -52,7 +52,7 @@ namespace CsJvm.Abstractions.VirtualMachine
         /// <summary>
         /// Runs thread
         /// </summary>
-        void Run();
+        Task RunAsync();
 
         /// <summary>
         /// Stops thread
@@ -62,11 +62,11 @@ namespace CsJvm.Abstractions.VirtualMachine
         /// <summary>
         /// Steps into one instruction
         /// </summary>
-        public void StepInto();
+        public Task StepIntoAsync();
 
         /// <summary>
         /// Steps over one instruction
         /// </summary>
-        public void StepOver();
+        public Task StepOverAsync();
     }
 }

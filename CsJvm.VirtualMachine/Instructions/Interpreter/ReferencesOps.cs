@@ -12,7 +12,7 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
     public partial class JvmInterpreter
     {
         [Opcode(0xb2, "getstatic")]
-        public void GetStatic(IJavaThread thread)
+        public async Task GetStatic(IJavaThread thread)
         {
             var indexbyte1 = thread.CurrentMethod.Code[thread.ProgramCounter++];
             var indexbyte2 = thread.CurrentMethod.Code[thread.ProgramCounter++];
@@ -27,8 +27,7 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
             if (!_heap.TryGetStaticClass(className, out var javaClass) || javaClass == null)
             {
                 // resolve class
-                if (!TryResolveClass(className, out javaClass) || javaClass == null)
-                    throw new InvalidOperationException($"Cannot resolve class {className}");
+                javaClass = await ResolveClass(className) ?? throw new InvalidOperationException($"Cannot resolve class {className}");
 
                 // looking for field in the resolved class and super-classes
                 while (javaClass != null && !javaClass.Fields.ContainsKey(field))
@@ -43,7 +42,7 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
             }
 
             // run static ctor
-            RunStaticCtor(javaClass, thread);
+            await RunStaticCtorAsync(javaClass, thread);
 
             if (javaClass == null || !javaClass.Fields.TryGetValue(field, out var value))
                 throw new InvalidOperationException($"Cannot find field {field}");
@@ -53,7 +52,7 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
         }
 
         [Opcode(0xb3, "putstatic")]
-        public void PutStatic(IJavaThread thread)
+        public async Task PutStatic(IJavaThread thread)
         {
             var indexbyte1 = thread.CurrentMethod.Code[thread.ProgramCounter++];
             var indexbyte2 = thread.CurrentMethod.Code[thread.ProgramCounter++];
@@ -69,8 +68,7 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
             if (!_heap.TryGetStaticClass(className, out var javaClass) || javaClass == null)
             {
                 // resolve class
-                if (!TryResolveClass(className, out javaClass) || javaClass == null)
-                    throw new InvalidOperationException($"Cannot resolve class {className}");
+                javaClass = await ResolveClass(className) ?? throw new InvalidOperationException($"Cannot resolve class {className}");
 
                 // looking for field in the resolved class and super-classes
                 while (javaClass != null && !javaClass.Fields.ContainsKey(field))
@@ -88,7 +86,7 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
                 throw new InvalidOperationException($"Cannot find field {field}");
 
             // run static ctor
-            RunStaticCtor(javaClass, thread);
+            await RunStaticCtorAsync(javaClass, thread);
 
             // get value from stack
             var value = thread.CurrentMethod.OperandStack.Pop();
@@ -98,7 +96,7 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
         }
 
         [Opcode(0xb4, "getfield")]
-        public void GetField(IJavaThread thread)
+        public Task GetField(IJavaThread thread)
         {
             var indexbyte1 = thread.CurrentMethod.Code[thread.ProgramCounter++];
             var indexbyte2 = thread.CurrentMethod.Code[thread.ProgramCounter++];
@@ -126,10 +124,12 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
                 throw new InvalidOperationException($"Cannot find field {field}");
 
             thread.CurrentMethod.OperandStack.Push(value);
+
+            return Task.CompletedTask;
         }
 
         [Opcode(0xb5, "putfield")]
-        public void PutField(IJavaThread thread)
+        public Task PutField(IJavaThread thread)
         {
             var indexbyte1 = thread.CurrentMethod.Code[thread.ProgramCounter++];
             var indexbyte2 = thread.CurrentMethod.Code[thread.ProgramCounter++];
@@ -176,14 +176,15 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
                     throw new InvalidOperationException($"Cannot find field {field}");
 
                 superClass.Fields[field] = reverse ? objectref : value;
-                return;
+                return Task.CompletedTask;
             }
 
             javaClass.Fields[field] = reverse ? objectref : value;
+            return Task.CompletedTask;
         }
 
         [Opcode(0xb6, "invokevirtual")]
-        public void InvokeVirtual(IJavaThread thread)
+        public Task InvokeVirtual(IJavaThread thread)
         {
             var indexbyte1 = thread.CurrentMethod.Code[thread.ProgramCounter++];
             var indexbyte2 = thread.CurrentMethod.Code[thread.ProgramCounter++];
@@ -246,7 +247,6 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
                     throw new NotImplementedException($"Native {className}.{key}");
 
                 thread.PushNative(nativeMethod);
-                return;
             }
 
             //if (heapClassRef.Name != className)
@@ -256,15 +256,11 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
             var frame = CreateFrame(javaClass, method, args, objectref);
 
             // run it
-            thread.PushFrame(frame);
-
-            // restore
-            //thread.RestoreFrame();
-            //thread.Run();
+            return thread.PushFrameAsync(frame);
         }
 
         [Opcode(0xb7, "invokespecial")]
-        public void InvokeSpecial(IJavaThread thread)
+        public async Task InvokeSpecial(IJavaThread thread)
         {
             var indexbyte1 = thread.CurrentMethod.Code[thread.ProgramCounter++];
             var indexbyte2 = thread.CurrentMethod.Code[thread.ProgramCounter++];
@@ -307,8 +303,7 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
                      throw new InvalidOperationException($"Cannot find method {key}");
              }*/
 
-            if (!TryResolveClass(className, out var javaClass) || javaClass == null)
-                throw new InvalidOperationException($"Cannot resolve class {className}");
+            var javaClass = await ResolveClass(className) ?? throw new InvalidOperationException($"Cannot resolve class {className}");
 
             // looking for method in the resolved class and super-classes
             while (javaClass != null && !javaClass.Methods.ContainsKey(key))
@@ -342,7 +337,7 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
                 thread.PushFrame(frame);*/
 
             // run it
-            thread.PushFrame(frame);
+            await thread.PushFrameAsync(frame);
 
             //var thread0 = new JavaThread(thread.Decoder, frame);
             //thread0.Run();
@@ -353,7 +348,7 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
         }
 
         [Opcode(0xb8, "invokestatic")]
-        public void InvokeStatic(IJavaThread thread)
+        public async Task InvokeStatic(IJavaThread thread)
         {
             var indexbyte1 = thread.CurrentMethod.Code[thread.ProgramCounter++];
             var indexbyte2 = thread.CurrentMethod.Code[thread.ProgramCounter++];
@@ -377,8 +372,7 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
             if (!_heap.TryGetStaticClass(className, out var javaClass) || javaClass == null)
             {
                 // resolve class
-                if (!TryResolveClass(className, out javaClass) || javaClass == null)
-                    throw new InvalidOperationException($"Cannot resolve class {className}");
+                javaClass = await ResolveClass(className) ?? throw new InvalidOperationException($"Cannot resolve class {className}");
 
                 // looking for field in the resolved class and super-classes
                 while (javaClass != null && !javaClass.Methods.ContainsKey(key))
@@ -413,7 +407,7 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
 
 
             var frame = CreateFrame(javaClass, method, args, null);
-            thread.PushFrame(frame);
+            await thread.PushFrameAsync(frame);
 
             // restore
             //thread.RestoreFrame();
@@ -421,13 +415,13 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
         }
 
         [Opcode(0xb9, "invokeinterface")]
-        public void InvokeInterface(IJavaThread thread) => throw new NotImplementedException();
+        public Task InvokeInterface(IJavaThread thread) => throw new NotImplementedException();
 
         [Opcode(0xba, "invokedynamic")]
-        public void InvokeDynamic(IJavaThread thread) => throw new NotImplementedException();
+        public Task InvokeDynamic(IJavaThread thread) => throw new NotImplementedException();
 
         [Opcode(0xbb, "new")]
-        public void New(IJavaThread thread)
+        public async Task New(IJavaThread thread)
         {
             var indexbyte1 = thread.CurrentMethod.Code[thread.ProgramCounter++];
             var indexbyte2 = thread.CurrentMethod.Code[thread.ProgramCounter++];
@@ -440,8 +434,7 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
 
             var className = ((CONSTANT_Utf8Info)thread.CurrentMethod.CpInfo[classInfo.NameIndex]).Utf8String;
 
-            if (!TryResolveClass(className, out var javaClass) || javaClass == null)
-                throw new InvalidOperationException($"Cannot resolve class {className}");
+            var javaClass = await ResolveClass(className) ?? throw new InvalidOperationException($"Cannot resolve class {className}");
 
             //RunStaticCtor(javaClass, thread);
 
@@ -450,7 +443,7 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
         }
 
         [Opcode(0xbc, "newarray")]
-        public void NewArray(IJavaThread thread)
+        public Task NewArray(IJavaThread thread)
         {
             var atype = (ArrayTypes)thread.CurrentMethod.Code[thread.ProgramCounter++];
             var count = (int)thread.CurrentMethod.OperandStack.Pop()!;
@@ -474,10 +467,12 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
 
             var arrayref = _heap.CreateArrayRef(result, atype, count);
             thread.CurrentMethod.OperandStack.Push(arrayref);
+
+            return Task.CompletedTask;
         }
 
         [Opcode(0xbd, "anewarray")]
-        public void AnewArray(IJavaThread thread)
+        public async Task AnewArray(IJavaThread thread)
         {
             var count = (int)thread.CurrentMethod.OperandStack.Pop()!;
             if (count < 0)
@@ -492,8 +487,7 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
                 throw new NotImplementedException($"{info.GetType()}");
 
             var className = ((CONSTANT_Utf8Info)thread.CurrentMethod.CpInfo[classInfo.NameIndex]).Utf8String;
-            if (!TryResolveClass(className, out var javaClass) || javaClass == null)
-                throw new InvalidOperationException($"Cannot resolve class {className}");
+            var javaClass = await ResolveClass(className) ?? throw new InvalidOperationException($"Cannot resolve class {className}");
 
             Array array = new HeapClassRef[count];
             var arrayref = _heap.CreateClassArrayRef(array, count);
@@ -502,7 +496,7 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
         }
 
         [Opcode(0xbe, "arraylength")]
-        public void ArrayLength(IJavaThread thread)
+        public Task ArrayLength(IJavaThread thread)
         {
             var arrayref = thread.CurrentMethod.OperandStack.Pop();
             if (arrayref == null)
@@ -516,31 +510,37 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
             };
 
             thread.CurrentMethod.OperandStack.Push(length);
+
+            return Task.CompletedTask;
         }
 
         [Opcode(0xbf, "athrow")]
-        public void Athrow(IJavaThread thread) => throw new NotImplementedException();
+        public Task Athrow(IJavaThread thread) => throw new NotImplementedException();
 
         [Opcode(0xc0, "checkcast")]
-        public void CheckCast(IJavaThread thread) => throw new NotImplementedException();
+        public Task CheckCast(IJavaThread thread) => throw new NotImplementedException();
 
         [Opcode(0xc1, "instanceof")]
-        public void InstanceOf(IJavaThread thread) => throw new NotImplementedException();
+        public Task InstanceOf(IJavaThread thread) => throw new NotImplementedException();
 
         [Opcode(0xc2, "monitorenter")]
-        public void MonitorEnter(IJavaThread thread)
+        public Task MonitorEnter(IJavaThread thread)
         {
             var objectref = thread.CurrentMethod.OperandStack.Pop();
             if (objectref == null)
                 throw new NullReferenceException(nameof(objectref));
+
+            return Task.CompletedTask;
         }
 
         [Opcode(0xc3, "monitorexit")]
-        public void MonitorExit(IJavaThread thread)
+        public Task MonitorExit(IJavaThread thread)
         {
             var objectref = thread.CurrentMethod.OperandStack.Pop();
             if (objectref == null)
                 throw new NullReferenceException(nameof(objectref));
+
+            return Task.CompletedTask;
         }
     }
 }

@@ -13,14 +13,14 @@ namespace CsJvm.Loader.Parsers
         /// <param name="jar">Jar file to parse</param>
         /// <param name="reader">Stream reader</param>
         /// <returns><see cref="JarFile"/> with parsed manifest data</returns>
-        public static JarFile ParseManifest(this JarFile jar, StreamReader reader)
+        public static async Task<JarFile?> ParseManifestAsync(this JarFile jar, StreamReader reader)
         {
-            var line = reader.ReadLine();
+            var line = await reader.ReadLineAsync();
             while (line != null)
             {
                 if (string.IsNullOrEmpty(line))
                 {
-                    line = reader.ReadLine();
+                    line = await reader.ReadLineAsync();
                     continue;
                 }
 
@@ -85,7 +85,7 @@ namespace CsJvm.Loader.Parsers
                     }
                 }
 
-                line = reader.ReadLine();
+                line = await reader.ReadLineAsync();
             }
 
             return jar;

@@ -38,37 +38,40 @@ namespace CsJvm.VirtualMachine
             _loader = loader;
             _configuration = configuration;
 
-            if (!TryLoadRuntime(configuration))
-                _logger.LogCritical("Cannot load java runtime library!");
+            Task.Run(async () =>
+            {
+                if (!await TryLoadRuntimeAsync())
+                    _logger.LogCritical("Cannot load java runtime library!");
+            });
+
         }
 
         /// <inheritdoc/>
-        public bool TryGet(string className, out JavaClass? javaClass)
-            => _loader.TryGetClass(className, out javaClass);
+        public Task<JavaClass?> GetClassAsync(string className)
+            => _loader.GetClassAsync(className);
 
         /// <summary>
         /// Tries load java runtime
         /// </summary>
-        /// <param name="configuration">Current configuration</param>
         /// <returns><see langword="true"></see> if success; otherwise <see langword="false"></see></returns>
-        private bool TryLoadRuntime(IConfiguration configuration)
+        private Task<bool> TryLoadRuntimeAsync()
         {
             try
             {
-                var path = configuration.GetValue<string>("JavaRuntime:Path");
+                var path = _configuration.GetValue<string>("JavaRuntime:Path");
                 if (string.IsNullOrWhiteSpace(path))
                 {
                     _logger.LogError("The java runtime path not specified in appconfig.json");
-                    return false;
+                    return Task.FromResult(false);
                 }
 
                 var rtPath = Path.Combine(path, "rt.jar");
-                return _loader.TryOpen(rtPath);
+                return _loader.OpenAsync(rtPath);
             }
             catch (Exception ex)
             {
                 _logger.LogCritical(ex, "Exception when loading java runtime");
-                return false;
+                return Task.FromResult(false);
             }
         }
     }

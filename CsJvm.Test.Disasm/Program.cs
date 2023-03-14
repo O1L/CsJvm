@@ -27,13 +27,15 @@ using var loader = host.Services.GetRequiredService<IJarLoader>();
 var logger = host.Services.GetRequiredService<ILogger<Program>>();
 var disasm = host.Services.GetRequiredService<IDisasm>();
 
-if (!loader.TryOpen(jarName) || loader.JAR == null)
+if (!await loader.OpenAsync(jarName) || loader.JAR == null)
 {
     logger.LogError("Cannot open {jarName}!", jarName);
     return;
 }
 
-if (!loader.TryGetClass(className, out var javaClass) || javaClass == null)
+
+var javaClass = await loader.GetClassAsync(className);
+if (javaClass == null)
 {
     logger.LogError("Cannot find class '{className}'!", className);
     return;

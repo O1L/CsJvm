@@ -8,102 +8,119 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
     public partial class JvmInterpreter
     {
         [Opcode(0x36, "istore")]
-        public void Istore(IJavaThread thread)
+        public Task Istore(IJavaThread thread)
         {
             var index = thread.CurrentMethod.Code[thread.ProgramCounter++];
-            Store<int>(thread, index);
+            return Store<int>(thread, index);
         }
 
         [Opcode(0x37, "lstore")]
-        public void Lstore(IJavaThread thread)
+        public Task Lstore(IJavaThread thread)
         {
             var index = thread.CurrentMethod.Code[thread.ProgramCounter++];
-            Store64<long>(thread, index);
+            return Store64<long>(thread, index);
         }
 
         [Opcode(0x38, "fstore")]
-        public void Fstore(IJavaThread thread)
+        public Task Fstore(IJavaThread thread)
         {
             var index = thread.CurrentMethod.Code[thread.ProgramCounter++];
-            Store<float>(thread, index);
+            return Store<float>(thread, index);
         }
 
         [Opcode(0x39, "dstore")]
-        public void Dstore(IJavaThread thread)
+        public Task Dstore(IJavaThread thread)
         {
             var index = thread.CurrentMethod.Code[thread.ProgramCounter++];
-            Store64<double>(thread, index);
+            return Store64<double>(thread, index);
         }
 
         [Opcode(0x3a, "astore")]
-        public void Astore(IJavaThread thread)
+        public Task Astore(IJavaThread thread)
         {
             var index = thread.CurrentMethod.Code[thread.ProgramCounter++];
             thread.CurrentMethod.LocalVariables[index] = thread.CurrentMethod.OperandStack.Pop();
+            return Task.CompletedTask;
         }
 
         [Opcode(0x3b, "istore_0")]
-        public void Istore0(IJavaThread thread) => Store<int>(thread, 0);
+        public Task Istore0(IJavaThread thread) => Store<int>(thread, 0);
 
         [Opcode(0x3c, "istore_1")]
-        public void Istore1(IJavaThread thread) => Store<int>(thread, 1);
+        public Task Istore1(IJavaThread thread) => Store<int>(thread, 1);
 
         [Opcode(0x3d, "istore_2")]
-        public void Istore2(IJavaThread thread) => Store<int>(thread, 2);
+        public Task Istore2(IJavaThread thread) => Store<int>(thread, 2);
 
         [Opcode(0x3e, "istore_3")]
-        public void Istore3(IJavaThread thread) => Store<int>(thread, 3);
+        public Task Istore3(IJavaThread thread) => Store<int>(thread, 3);
 
         [Opcode(0x3f, "lstore_0")]
-        public void Lstore0(IJavaThread thread) => Store64<long>(thread, 0);
+        public Task Lstore0(IJavaThread thread) => Store64<long>(thread, 0);
 
         [Opcode(0x40, "lstore_1")]
-        public void Lstore1(IJavaThread thread) => Store64<long>(thread, 1);
+        public Task Lstore1(IJavaThread thread) => Store64<long>(thread, 1);
 
         [Opcode(0x41, "lstore_2")]
-        public void Lstore2(IJavaThread thread) => Store64<long>(thread, 2);
+        public Task Lstore2(IJavaThread thread) => Store64<long>(thread, 2);
 
         [Opcode(0x42, "lstore_3")]
-        public void Lstore3(IJavaThread thread) => Store64<long>(thread, 3);
+        public Task Lstore3(IJavaThread thread) => Store64<long>(thread, 3);
 
         [Opcode(0x43, "fstore_0")]
-        public void Fstore0(IJavaThread thread) => Store<float>(thread, 0);
+        public Task Fstore0(IJavaThread thread) => Store<float>(thread, 0);
 
         [Opcode(0x44, "fstore_1")]
-        public void Fstore1(IJavaThread thread) => Store<float>(thread, 1);
+        public Task Fstore1(IJavaThread thread) => Store<float>(thread, 1);
 
         [Opcode(0x45, "fstore_2")]
-        public void Fstore2(IJavaThread thread) => Store<float>(thread, 2);
+        public Task Fstore2(IJavaThread thread) => Store<float>(thread, 2);
 
         [Opcode(0x46, "fstore_3")]
-        public void Fstore3(IJavaThread thread) => Store<float>(thread, 3);
+        public Task Fstore3(IJavaThread thread) => Store<float>(thread, 3);
 
         [Opcode(0x47, "dstore_0")]
-        public void Dstore0(IJavaThread thread) => Store64<double>(thread, 0);
+        public Task Dstore0(IJavaThread thread) => Store64<double>(thread, 0);
 
         [Opcode(0x48, "dstore_1")]
-        public void Dstore1(IJavaThread thread) => Store64<double>(thread, 1);
+        public Task Dstore1(IJavaThread thread) => Store64<double>(thread, 1);
 
         [Opcode(0x49, "dstore_2")]
-        public void Dstore2(IJavaThread thread) => Store64<double>(thread, 2);
+        public Task Dstore2(IJavaThread thread) => Store64<double>(thread, 2);
 
         [Opcode(0x4a, "dstore_3")]
-        public void Dstore3(IJavaThread thread) => Store64<double>(thread, 3);
+        public Task Dstore3(IJavaThread thread) => Store64<double>(thread, 3);
 
         [Opcode(0x4b, "astore_0")]
-        public void Astore0(IJavaThread thread) => thread.CurrentMethod.LocalVariables[0] = thread.CurrentMethod.OperandStack.Pop();
+        public Task Astore0(IJavaThread thread)
+        {
+            thread.CurrentMethod.LocalVariables[0] = thread.CurrentMethod.OperandStack.Pop();
+            return Task.CompletedTask;
+        }
 
         [Opcode(0x4c, "astore_1")]
-        public void Astore1(IJavaThread thread) => thread.CurrentMethod.LocalVariables[1] = thread.CurrentMethod.OperandStack.Pop();
+        public Task Astore1(IJavaThread thread)
+        {
+            thread.CurrentMethod.LocalVariables[1] = thread.CurrentMethod.OperandStack.Pop();
+            return Task.CompletedTask;
+        }
 
         [Opcode(0x4d, "astore_2")]
-        public void Astore2(IJavaThread thread) => thread.CurrentMethod.LocalVariables[2] = thread.CurrentMethod.OperandStack.Pop();
+        public Task Astore2(IJavaThread thread)
+        {
+            thread.CurrentMethod.LocalVariables[2] = thread.CurrentMethod.OperandStack.Pop();
+            return Task.CompletedTask;
+        }
 
         [Opcode(0x4e, "astore_3")]
-        public void Astore3(IJavaThread thread) => thread.CurrentMethod.LocalVariables[3] = thread.CurrentMethod.OperandStack.Pop();
+        public Task Astore3(IJavaThread thread)
+        {
+            thread.CurrentMethod.LocalVariables[3] = thread.CurrentMethod.OperandStack.Pop();
+            return Task.CompletedTask;
+        }
 
         [Opcode(0x4f, "iastore")]
-        public void Iastore(IJavaThread thread)
+        public Task Iastore(IJavaThread thread)
         {
             var value = (int)thread.CurrentMethod.OperandStack.Pop()!;
             var index = (int)thread.CurrentMethod.OperandStack.Pop()!;
@@ -124,10 +141,11 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
                 throw new IndexOutOfRangeException(nameof(index));
 
             array.SetValue(value, index);
+            return Task.CompletedTask;
         }
 
         [Opcode(0x50, "lastore")]
-        public void Lastore(IJavaThread thread)
+        public Task Lastore(IJavaThread thread)
         {
             var value = (long)thread.CurrentMethod.OperandStack.Pop()!;
             var index = (int)thread.CurrentMethod.OperandStack.Pop()!;
@@ -148,10 +166,11 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
                 throw new IndexOutOfRangeException(nameof(index));
 
             array.SetValue(value, index);
+            return Task.CompletedTask;
         }
 
         [Opcode(0x51, "fastore")]
-        public void Fastore(IJavaThread thread)
+        public Task Fastore(IJavaThread thread)
         {
             var value = (float)thread.CurrentMethod.OperandStack.Pop()!;
             var index = (int)thread.CurrentMethod.OperandStack.Pop()!;
@@ -172,10 +191,11 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
                 throw new IndexOutOfRangeException(nameof(index));
 
             array.SetValue(value, index);
+            return Task.CompletedTask;
         }
 
         [Opcode(0x52, "dastore")]
-        public void Dastore(IJavaThread thread)
+        public Task Dastore(IJavaThread thread)
         {
             var value = (double)thread.CurrentMethod.OperandStack.Pop()!;
             var index = (int)thread.CurrentMethod.OperandStack.Pop()!;
@@ -196,10 +216,11 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
                 throw new IndexOutOfRangeException(nameof(index));
 
             array.SetValue(value, index);
+            return Task.CompletedTask;
         }
 
         [Opcode(0x53, "aastore")]
-        public void Aastore(IJavaThread thread)
+        public Task Aastore(IJavaThread thread)
         {
             var value = (HeapClassRef)thread.CurrentMethod.OperandStack.Pop()!;
             var index = (int)thread.CurrentMethod.OperandStack.Pop()!;
@@ -218,10 +239,11 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
 
             // set the value
             array.SetValue(value, index);
+            return Task.CompletedTask;
         }
 
         [Opcode(0x54, "bastore")]
-        public void Bastore(IJavaThread thread)
+        public Task Bastore(IJavaThread thread)
         {
             var value = (int)thread.CurrentMethod.OperandStack.Pop()!;
             var index = (int)thread.CurrentMethod.OperandStack.Pop()!;
@@ -247,10 +269,11 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
 
             // set the value
             array.SetValue(valueToSet, index);
+            return Task.CompletedTask;
         }
 
         [Opcode(0x55, "castore")]
-        public void Castore(IJavaThread thread)
+        public Task Castore(IJavaThread thread)
         {
             var value = (int)thread.CurrentMethod.OperandStack.Pop()!;
             var index = (int)thread.CurrentMethod.OperandStack.Pop()!;
@@ -271,10 +294,11 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
                 throw new IndexOutOfRangeException(nameof(index));
 
             array.SetValue((char)value, index);
+            return Task.CompletedTask;
         }
 
         [Opcode(0x56, "sastore")]
-        public void Sastore(IJavaThread thread)
+        public Task Sastore(IJavaThread thread)
         {
             var value = (int)thread.CurrentMethod.OperandStack.Pop()!;
             var index = (int)thread.CurrentMethod.OperandStack.Pop()!;
@@ -295,6 +319,7 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
                 throw new IndexOutOfRangeException(nameof(index));
 
             array.SetValue((short)value, index);
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -303,8 +328,11 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
         /// <typeparam name="T">Data type</typeparam>
         /// <param name="thread">Current thread</param>
         /// <param name="index">Local variables index</param>
-        private static void Store<T>(IJavaThread thread, int index)
-            => thread.CurrentMethod.LocalVariables[index] = Convert.ChangeType(thread.CurrentMethod.OperandStack.Pop(), typeof(T));
+        private static Task Store<T>(IJavaThread thread, int index)
+        {
+            thread.CurrentMethod.LocalVariables[index] = Convert.ChangeType(thread.CurrentMethod.OperandStack.Pop(), typeof(T));
+            return Task.CompletedTask;
+        }
 
         /// <summary>
         /// Store 64-bit value to local variables
@@ -312,13 +340,15 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
         /// <typeparam name="T">Data type</typeparam>
         /// <param name="thread">Current thread</param>
         /// <param name="index">Local variables index</param>
-        private static void Store64<T>(IJavaThread thread, int index)
+        private static Task Store64<T>(IJavaThread thread, int index)
         {
             var value = Convert.ChangeType(thread.CurrentMethod.OperandStack.Pop(), typeof(T)); // (T?)thread.CurrentMethod.OperandStack.Pop();
 
             // the local variables at index and index+1 are set to value
             thread.CurrentMethod.LocalVariables[index + 0] = value;
             thread.CurrentMethod.LocalVariables[index + 1] = value;
+
+            return Task.CompletedTask;
         }
 
     }

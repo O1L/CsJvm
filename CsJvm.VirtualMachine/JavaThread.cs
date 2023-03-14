@@ -90,7 +90,7 @@ namespace CsJvm.VirtualMachine
         }
 
         /// <inheritdoc/>
-        public void PushFrame(Frame frame)
+        public async Task PushFrameAsync(Frame frame)
         {
             if (CurrentMethod != null)
             {
@@ -111,15 +111,15 @@ namespace CsJvm.VirtualMachine
             switch (_stepMode)
             {
                 case StepMode.Run:
-                    Run();
+                    await RunAsync();
                     break;
 
                 case StepMode.Into:
-                    StepInto();
+                    await StepIntoAsync();
                     break;
 
                 case StepMode.Over:
-                    RunAndRestore();
+                    await RunAndRestoreAsync();
                     break;
 
                 default: throw new InvalidOperationException($"Unknown step mode: {_stepMode}");
@@ -143,14 +143,14 @@ namespace CsJvm.VirtualMachine
         }
 
         /// <inheritdoc/>
-        public void Run()
+        public async Task RunAsync()
         {
             if (CurrentMethod == null)
                 return;
 
             while (ProgramCounter < CurrentMethod.Code.Length)
             {
-                _decoder.Execute(this);
+                await _decoder.ExecuteAsync(this);
             }
 
             // the current method execution is done, restore previous method and continue
@@ -163,7 +163,7 @@ namespace CsJvm.VirtualMachine
                 CurrentMethod = prevFrame;
 
                 // continue execution
-                Run();
+                await RunAsync();
             }
         }
 
@@ -171,7 +171,7 @@ namespace CsJvm.VirtualMachine
         public void Stop() => throw new NotImplementedException();
 
         /// <inheritdoc/>
-        public void StepInto()
+        public async Task StepIntoAsync()
         {
             _stepMode = StepMode.Into;
 
@@ -180,7 +180,7 @@ namespace CsJvm.VirtualMachine
 
             if (ProgramCounter < CurrentMethod.Code.Length)
             {
-                _decoder.Execute(this);
+                await _decoder.ExecuteAsync(this);
                 return;
             }
 
@@ -194,12 +194,12 @@ namespace CsJvm.VirtualMachine
                 CurrentMethod = prevFrame;
 
                 // continue execution
-                StepInto();
+                await StepIntoAsync();
             }
         }
 
         /// <inheritdoc/>
-        public void StepOver()
+        public async Task StepOverAsync()
         {
             _stepMode = StepMode.Over;
 
@@ -208,7 +208,7 @@ namespace CsJvm.VirtualMachine
 
             if (ProgramCounter < CurrentMethod.Code.Length)
             {
-                _decoder.Execute(this);
+                await _decoder.ExecuteAsync(this);
                 return;
             }
 
@@ -222,7 +222,7 @@ namespace CsJvm.VirtualMachine
                 CurrentMethod = prevFrame;
 
                 // continue execution
-                StepOver();
+                await StepOverAsync();
             }
         }
 
@@ -250,11 +250,11 @@ namespace CsJvm.VirtualMachine
         /// <summary>
         /// Runs current method and restores previous frame
         /// </summary>
-        private void RunAndRestore()
+        private async Task RunAndRestoreAsync()
         {
             while (ProgramCounter < CurrentMethod.Code.Length)
             {
-                _decoder.Execute(this);
+                await _decoder.ExecuteAsync(this);
             }
 
             // the current method execution is done, restore previous method and continue

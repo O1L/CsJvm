@@ -25,16 +25,15 @@ namespace CsJvm.Loader
         }
 
         /// <inheritdoc/>
-        public bool TryLoad(BinaryReader? reader, out ClassFile? classFile)
+        public Task<ClassFile?> LoadAsync(BinaryReader? reader)
         {
-            classFile = null;
             if (reader == null)
-                return false;
+                return Task.FromResult<ClassFile?>(null);
 
-            try
+            return Task.Run<ClassFile?>(() =>
             {
                 // the chain call order is important!
-                classFile = new ClassFile(reader)
+                return new ClassFile(reader)
                     .ParseMagic()
                     .ParseVersion()
                     .ParseConstantPool()
@@ -43,14 +42,7 @@ namespace CsJvm.Loader
                     .ParseFileds()
                     .ParseMethods()
                     .ParseAttributes();
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error on loading class file!");
-                return false;
-            }
+            });
         }
     }
 }

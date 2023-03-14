@@ -11,7 +11,7 @@ namespace CsJvm.Abstractions.Loader
         /// Load specified .class file
         /// </summary>
         /// <param name="reader"><see cref="BinaryReader"/> instance of current data reader</param>
-        /// <returns><see langword="true"></see> if success; otherwise <see langword="false"></see></returns>
-        bool TryLoad(BinaryReader? reader, out ClassFile? classFile);
+        /// <returns>Loaded class file</returns>
+        Task<ClassFile?> LoadAsync(BinaryReader? reader);
     }
 }

@@ -8,430 +8,430 @@ namespace CsJvm.Abstractions.Instructions
     public interface IOpcodes
     {
         // Constant ops
-        void Nop(IJavaThread thread);
+        Task Nop(IJavaThread thread);
 
-        void AconstNull(IJavaThread thread);
+        Task AconstNull(IJavaThread thread);
 
-        void IconstM1(IJavaThread thread);
+        Task IconstM1(IJavaThread thread);
 
-        void Iconst0(IJavaThread thread);
+        Task Iconst0(IJavaThread thread);
 
-        void Iconst1(IJavaThread thread);
+        Task Iconst1(IJavaThread thread);
 
-        void Iconst2(IJavaThread thread);
+        Task Iconst2(IJavaThread thread);
 
-        void Iconst3(IJavaThread thread);
+        Task Iconst3(IJavaThread thread);
 
-        void Iconst4(IJavaThread thread);
+        Task Iconst4(IJavaThread thread);
 
-        void Iconst5(IJavaThread thread);
+        Task Iconst5(IJavaThread thread);
 
-        void Lconst0(IJavaThread thread);
+        Task Lconst0(IJavaThread thread);
 
-        void Lconst1(IJavaThread thread);
+        Task Lconst1(IJavaThread thread);
 
-        void Fconst0(IJavaThread thread);
+        Task Fconst0(IJavaThread thread);
 
-        void Fconst1(IJavaThread thread);
+        Task Fconst1(IJavaThread thread);
 
-        void Fconst2(IJavaThread thread);
+        Task Fconst2(IJavaThread thread);
 
-        void Dconst0(IJavaThread thread);
+        Task Dconst0(IJavaThread thread);
 
-        void Dconst1(IJavaThread thread);
+        Task Dconst1(IJavaThread thread);
 
-        void Bipush(IJavaThread thread);
+        Task Bipush(IJavaThread thread);
 
-        void Sipush(IJavaThread thread);
+        Task Sipush(IJavaThread thread);
 
-        void Ldc(IJavaThread thread);
+        Task Ldc(IJavaThread thread);
 
-        void LdcW(IJavaThread thread);
+        Task LdcW(IJavaThread thread);
 
-        void Ldc2w(IJavaThread thread);
+        Task Ldc2w(IJavaThread thread);
 
         // Load ops
-        void Iload(IJavaThread thread);
+        Task Iload(IJavaThread thread);
 
-        void Lload(IJavaThread thread);
+        Task Lload(IJavaThread thread);
 
-        void Fload(IJavaThread thread);
+        Task Fload(IJavaThread thread);
 
-        void Dload(IJavaThread thread);
+        Task Dload(IJavaThread thread);
 
-        void Aload(IJavaThread thread);
+        Task Aload(IJavaThread thread);
 
-        void Iload0(IJavaThread thread);
+        Task Iload0(IJavaThread thread);
 
-        void Iload1(IJavaThread thread);
+        Task Iload1(IJavaThread thread);
 
-        void Iload2(IJavaThread thread);
+        Task Iload2(IJavaThread thread);
 
-        void Iload3(IJavaThread thread);
+        Task Iload3(IJavaThread thread);
 
-        void Lload0(IJavaThread thread);
+        Task Lload0(IJavaThread thread);
 
-        void Lload1(IJavaThread thread);
+        Task Lload1(IJavaThread thread);
 
-        void Lload2(IJavaThread thread);
+        Task Lload2(IJavaThread thread);
 
-        void Lload3(IJavaThread thread);
+        Task Lload3(IJavaThread thread);
 
-        void Fload0(IJavaThread thread);
+        Task Fload0(IJavaThread thread);
 
-        void Fload1(IJavaThread thread);
+        Task Fload1(IJavaThread thread);
 
-        void Fload2(IJavaThread thread);
+        Task Fload2(IJavaThread thread);
 
-        void Fload3(IJavaThread thread);
+        Task Fload3(IJavaThread thread);
 
-        void Dload0(IJavaThread thread);
+        Task Dload0(IJavaThread thread);
 
-        void Dload1(IJavaThread thread);
+        Task Dload1(IJavaThread thread);
 
-        void Dload2(IJavaThread thread);
+        Task Dload2(IJavaThread thread);
 
-        void Dload3(IJavaThread thread);
+        Task Dload3(IJavaThread thread);
 
-        void Aload0(IJavaThread thread);
+        Task Aload0(IJavaThread thread);
 
-        void Aload1(IJavaThread thread);
+        Task Aload1(IJavaThread thread);
 
-        void Aload2(IJavaThread thread);
+        Task Aload2(IJavaThread thread);
 
-        void Aload3(IJavaThread thread);
+        Task Aload3(IJavaThread thread);
 
-        void Iaload(IJavaThread thread);
+        Task Iaload(IJavaThread thread);
 
-        void Laload(IJavaThread thread);
+        Task Laload(IJavaThread thread);
 
-        void Faload(IJavaThread thread);
+        Task Faload(IJavaThread thread);
 
-        void Daload(IJavaThread thread);
+        Task Daload(IJavaThread thread);
 
-        void Aaload(IJavaThread thread);
+        Task Aaload(IJavaThread thread);
 
-        void Baload(IJavaThread thread);
+        Task Baload(IJavaThread thread);
 
-        void Caload(IJavaThread thread);
+        Task Caload(IJavaThread thread);
 
-        void Saload(IJavaThread thread);
+        Task Saload(IJavaThread thread);
 
         // Store ops
-        void Istore(IJavaThread thread);
+        Task Istore(IJavaThread thread);
 
-        void Lstore(IJavaThread thread);
+        Task Lstore(IJavaThread thread);
 
-        void Fstore(IJavaThread thread);
+        Task Fstore(IJavaThread thread);
 
-        void Dstore(IJavaThread thread);
+        Task Dstore(IJavaThread thread);
 
-        void Astore(IJavaThread thread);
+        Task Astore(IJavaThread thread);
 
-        void Istore0(IJavaThread thread);
+        Task Istore0(IJavaThread thread);
 
-        void Istore1(IJavaThread thread);
+        Task Istore1(IJavaThread thread);
 
-        void Istore2(IJavaThread thread);
+        Task Istore2(IJavaThread thread);
 
-        void Istore3(IJavaThread thread);
+        Task Istore3(IJavaThread thread);
 
-        void Lstore0(IJavaThread thread);
+        Task Lstore0(IJavaThread thread);
 
-        void Lstore1(IJavaThread thread);
+        Task Lstore1(IJavaThread thread);
 
-        void Lstore2(IJavaThread thread);
+        Task Lstore2(IJavaThread thread);
 
-        void Lstore3(IJavaThread thread);
+        Task Lstore3(IJavaThread thread);
 
-        void Fstore0(IJavaThread thread);
+        Task Fstore0(IJavaThread thread);
 
-        void Fstore1(IJavaThread thread);
+        Task Fstore1(IJavaThread thread);
 
-        void Fstore2(IJavaThread thread);
+        Task Fstore2(IJavaThread thread);
 
-        void Fstore3(IJavaThread thread);
+        Task Fstore3(IJavaThread thread);
 
-        void Dstore0(IJavaThread thread);
+        Task Dstore0(IJavaThread thread);
 
-        void Dstore1(IJavaThread thread);
+        Task Dstore1(IJavaThread thread);
 
-        void Dstore2(IJavaThread thread);
+        Task Dstore2(IJavaThread thread);
 
-        void Dstore3(IJavaThread thread);
+        Task Dstore3(IJavaThread thread);
 
-        void Astore0(IJavaThread thread);
+        Task Astore0(IJavaThread thread);
 
-        void Astore1(IJavaThread thread);
+        Task Astore1(IJavaThread thread);
 
-        void Astore2(IJavaThread thread);
+        Task Astore2(IJavaThread thread);
 
-        void Astore3(IJavaThread thread);
+        Task Astore3(IJavaThread thread);
 
-        void Iastore(IJavaThread thread);
+        Task Iastore(IJavaThread thread);
 
-        void Lastore(IJavaThread thread);
+        Task Lastore(IJavaThread thread);
 
-        void Fastore(IJavaThread thread);
+        Task Fastore(IJavaThread thread);
 
-        void Dastore(IJavaThread thread);
+        Task Dastore(IJavaThread thread);
 
-        void Aastore(IJavaThread thread);
+        Task Aastore(IJavaThread thread);
 
-        void Bastore(IJavaThread thread);
+        Task Bastore(IJavaThread thread);
 
-        void Castore(IJavaThread thread);
+        Task Castore(IJavaThread thread);
 
-        void Sastore(IJavaThread thread);
+        Task Sastore(IJavaThread thread);
 
         // Stack ops
-        void Pop(IJavaThread thread);
+        Task Pop(IJavaThread thread);
 
-        void Pop2(IJavaThread thread);
+        Task Pop2(IJavaThread thread);
 
-        void Dup(IJavaThread thread);
+        Task Dup(IJavaThread thread);
 
-        void DupX1(IJavaThread thread);
+        Task DupX1(IJavaThread thread);
 
-        void DupX2(IJavaThread thread);
+        Task DupX2(IJavaThread thread);
 
-        void Dup2(IJavaThread thread);
+        Task Dup2(IJavaThread thread);
 
-        void Dup2X1(IJavaThread thread);
+        Task Dup2X1(IJavaThread thread);
 
-        void Dup2X2(IJavaThread thread);
+        Task Dup2X2(IJavaThread thread);
 
-        void Swap(IJavaThread thread);
+        Task Swap(IJavaThread thread);
 
         // Math ops
-        void Iadd(IJavaThread thread);
+        Task Iadd(IJavaThread thread);
 
-        void Ladd(IJavaThread thread);
+        Task Ladd(IJavaThread thread);
 
-        void Fadd(IJavaThread thread);
+        Task Fadd(IJavaThread thread);
 
-        void Dadd(IJavaThread thread);
+        Task Dadd(IJavaThread thread);
 
-        void Isub(IJavaThread thread);
+        Task Isub(IJavaThread thread);
 
-        void Lsub(IJavaThread thread);
+        Task Lsub(IJavaThread thread);
 
-        void Fsub(IJavaThread thread);
+        Task Fsub(IJavaThread thread);
 
-        void Dsub(IJavaThread thread);
+        Task Dsub(IJavaThread thread);
 
-        void Imul(IJavaThread thread);
+        Task Imul(IJavaThread thread);
 
-        void Lmul(IJavaThread thread);
+        Task Lmul(IJavaThread thread);
 
-        void Fmul(IJavaThread thread);
+        Task Fmul(IJavaThread thread);
 
-        void Dmul(IJavaThread thread);
+        Task Dmul(IJavaThread thread);
 
-        void Idiv(IJavaThread thread);
+        Task Idiv(IJavaThread thread);
 
-        void Ldiv(IJavaThread thread);
+        Task Ldiv(IJavaThread thread);
 
-        void Fdiv(IJavaThread thread);
+        Task Fdiv(IJavaThread thread);
 
-        void Ddiv(IJavaThread thread);
+        Task Ddiv(IJavaThread thread);
 
-        void Irem(IJavaThread thread);
+        Task Irem(IJavaThread thread);
 
-        void Lrem(IJavaThread thread);
+        Task Lrem(IJavaThread thread);
 
-        void Frem(IJavaThread thread);
+        Task Frem(IJavaThread thread);
 
-        void Drem(IJavaThread thread);
+        Task Drem(IJavaThread thread);
 
-        void Ineg(IJavaThread thread);
+        Task Ineg(IJavaThread thread);
 
-        void Lneg(IJavaThread thread);
+        Task Lneg(IJavaThread thread);
 
-        void Fneg(IJavaThread thread);
+        Task Fneg(IJavaThread thread);
 
-        void Dneg(IJavaThread thread);
+        Task Dneg(IJavaThread thread);
 
-        void Ishl(IJavaThread thread);
+        Task Ishl(IJavaThread thread);
 
-        void Lshl(IJavaThread thread);
+        Task Lshl(IJavaThread thread);
 
-        void Ishr(IJavaThread thread);
+        Task Ishr(IJavaThread thread);
 
-        void Lshr(IJavaThread thread);
+        Task Lshr(IJavaThread thread);
 
-        void Iushr(IJavaThread thread);
+        Task Iushr(IJavaThread thread);
 
-        void Lushr(IJavaThread thread);
+        Task Lushr(IJavaThread thread);
 
-        void Iand(IJavaThread thread);
+        Task Iand(IJavaThread thread);
 
-        void Land(IJavaThread thread);
+        Task Land(IJavaThread thread);
 
-        void Ior(IJavaThread thread);
+        Task Ior(IJavaThread thread);
 
-        void Lor(IJavaThread thread);
+        Task Lor(IJavaThread thread);
 
-        void Ixor(IJavaThread thread);
+        Task Ixor(IJavaThread thread);
 
-        void Lxor(IJavaThread thread);
+        Task Lxor(IJavaThread thread);
 
-        void Iinc(IJavaThread thread);
+        Task Iinc(IJavaThread thread);
 
 
         // Conversions ops
-        void I2l(IJavaThread thread);
+        Task I2l(IJavaThread thread);
 
-        void I2f(IJavaThread thread);
+        Task I2f(IJavaThread thread);
 
-        void I2d(IJavaThread thread);
+        Task I2d(IJavaThread thread);
 
-        void L2i(IJavaThread thread);
+        Task L2i(IJavaThread thread);
 
-        void L2f(IJavaThread thread);
+        Task L2f(IJavaThread thread);
 
-        void L2d(IJavaThread thread);
+        Task L2d(IJavaThread thread);
 
-        void F2i(IJavaThread thread);
+        Task F2i(IJavaThread thread);
 
-        void F2l(IJavaThread thread);
+        Task F2l(IJavaThread thread);
 
-        void F2d(IJavaThread thread);
+        Task F2d(IJavaThread thread);
 
-        void D2i(IJavaThread thread);
+        Task D2i(IJavaThread thread);
 
-        void D2l(IJavaThread thread);
+        Task D2l(IJavaThread thread);
 
-        void D2f(IJavaThread thread);
+        Task D2f(IJavaThread thread);
 
-        void I2b(IJavaThread thread);
+        Task I2b(IJavaThread thread);
 
-        void I2c(IJavaThread thread);
+        Task I2c(IJavaThread thread);
 
-        void I2s(IJavaThread thread);
+        Task I2s(IJavaThread thread);
 
 
         // Comparisons ops
-        void Lcmp(IJavaThread thread);
+        Task Lcmp(IJavaThread thread);
 
-        void Fcmpl(IJavaThread thread);
+        Task Fcmpl(IJavaThread thread);
 
-        void Fcmpg(IJavaThread thread);
+        Task Fcmpg(IJavaThread thread);
 
-        void Dcmpl(IJavaThread thread);
+        Task Dcmpl(IJavaThread thread);
 
-        void Dcmpg(IJavaThread thread);
+        Task Dcmpg(IJavaThread thread);
 
-        void Ifeq(IJavaThread thread);
+        Task Ifeq(IJavaThread thread);
 
-        void Ifne(IJavaThread thread);
+        Task Ifne(IJavaThread thread);
 
-        void Iflt(IJavaThread thread);
+        Task Iflt(IJavaThread thread);
 
-        void Ifge(IJavaThread thread);
+        Task Ifge(IJavaThread thread);
 
-        void Ifgt(IJavaThread thread);
+        Task Ifgt(IJavaThread thread);
 
-        void Ifle(IJavaThread thread);
+        Task Ifle(IJavaThread thread);
 
-        void FfIcmpeq(IJavaThread thread);
+        Task FfIcmpeq(IJavaThread thread);
 
-        void FfIcmpne(IJavaThread thread);
+        Task FfIcmpne(IJavaThread thread);
 
-        void FfIcmplt(IJavaThread thread);
+        Task FfIcmplt(IJavaThread thread);
 
-        void FfIcmpge(IJavaThread thread);
+        Task FfIcmpge(IJavaThread thread);
 
-        void FfIcmpgt(IJavaThread thread);
+        Task FfIcmpgt(IJavaThread thread);
 
-        void FfIcmple(IJavaThread thread);
+        Task FfIcmple(IJavaThread thread);
 
-        void IfAcmpeq(IJavaThread thread);
+        Task IfAcmpeq(IJavaThread thread);
 
-        void IfAcmpne(IJavaThread thread);
+        Task IfAcmpne(IJavaThread thread);
 
 
         // Control ops
-        void Goto(IJavaThread thread);
+        Task Goto(IJavaThread thread);
 
-        void Jsr(IJavaThread thread);
+        Task Jsr(IJavaThread thread);
 
-        void Ret(IJavaThread thread);
+        Task Ret(IJavaThread thread);
 
-        void TableSwitch(IJavaThread thread);
+        Task TableSwitch(IJavaThread thread);
 
-        void LookupSwitch(IJavaThread thread);
+        Task LookupSwitch(IJavaThread thread);
 
-        void Ireturn(IJavaThread thread);
+        Task Ireturn(IJavaThread thread);
 
-        void Lreturn(IJavaThread thread);
+        Task Lreturn(IJavaThread thread);
 
-        void Freturn(IJavaThread thread);
+        Task Freturn(IJavaThread thread);
 
-        void Dreturn(IJavaThread thread);
+        Task Dreturn(IJavaThread thread);
 
-        void Areturn(IJavaThread thread);
+        Task Areturn(IJavaThread thread);
 
-        void Return(IJavaThread thread);
+        Task Return(IJavaThread thread);
 
 
         // References ops
-        void GetStatic(IJavaThread thread);
+        Task GetStatic(IJavaThread thread);
 
-        void PutStatic(IJavaThread thread);
+        Task PutStatic(IJavaThread thread);
 
-        void GetField(IJavaThread thread);
+        Task GetField(IJavaThread thread);
 
-        void PutField(IJavaThread thread);
+        Task PutField(IJavaThread thread);
 
-        void InvokeVirtual(IJavaThread thread);
+        Task InvokeVirtual(IJavaThread thread);
 
-        void InvokeSpecial(IJavaThread thread);
+        Task InvokeSpecial(IJavaThread thread);
 
-        void InvokeStatic(IJavaThread thread);
+        Task InvokeStatic(IJavaThread thread);
 
-        void InvokeInterface(IJavaThread thread);
+        Task InvokeInterface(IJavaThread thread);
 
-        void InvokeDynamic(IJavaThread thread);
+        Task InvokeDynamic(IJavaThread thread);
 
-        void New(IJavaThread thread);
+        Task New(IJavaThread thread);
 
-        void NewArray(IJavaThread thread);
+        Task NewArray(IJavaThread thread);
 
-        void AnewArray(IJavaThread thread);
+        Task AnewArray(IJavaThread thread);
 
-        void ArrayLength(IJavaThread thread);
+        Task ArrayLength(IJavaThread thread);
 
-        void Athrow(IJavaThread thread);
+        Task Athrow(IJavaThread thread);
 
-        void CheckCast(IJavaThread thread);
+        Task CheckCast(IJavaThread thread);
 
-        void InstanceOf(IJavaThread thread);
+        Task InstanceOf(IJavaThread thread);
 
-        void MonitorEnter(IJavaThread thread);
+        Task MonitorEnter(IJavaThread thread);
 
-        void MonitorExit(IJavaThread thread);
+        Task MonitorExit(IJavaThread thread);
 
 
         // Extended ops
-        void Wide(IJavaThread thread);
+        Task Wide(IJavaThread thread);
 
-        void MultiAnewArray(IJavaThread thread);
+        Task MultiAnewArray(IJavaThread thread);
 
-        void IfNull(IJavaThread thread);
+        Task IfNull(IJavaThread thread);
 
-        void IfNonNull(IJavaThread thread);
+        Task IfNonNull(IJavaThread thread);
 
-        void GotoW(IJavaThread thread);
+        Task GotoW(IJavaThread thread);
 
-        void JsrW(IJavaThread thread);
+        Task JsrW(IJavaThread thread);
 
 
         // Reserved ops
-        void Breakpoint(IJavaThread thread);
+        Task Breakpoint(IJavaThread thread);
 
-        void Impdep1(IJavaThread thread);
+        Task Impdep1(IJavaThread thread);
 
-        void Impdep2(IJavaThread thread);
+        Task Impdep2(IJavaThread thread);
     }
 }

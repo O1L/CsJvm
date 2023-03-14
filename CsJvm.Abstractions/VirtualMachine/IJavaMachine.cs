@@ -15,12 +15,12 @@
         /// Loads JAR file to execute
         /// </summary>
         /// <param name="path"></param>
-        public void Load(string path);
+        public Task<bool> LoadAsync(string path);
 
         /// <summary>
         /// Start main method execution
         /// </summary>
-        public void Run();
+        public Task RunAsync();
 
         /// <summary>
         /// Pause / resume virtual machine
@@ -35,11 +35,11 @@
         /// <summary>
         /// Steps into one instruction
         /// </summary>
-        public void StepInto();
+        public Task StepIntoAsync();
 
         /// <summary>
         /// Steps over one instruction
         /// </summary>
-        public void StepOver();
+        public Task StepOverAsync();
     }
 }

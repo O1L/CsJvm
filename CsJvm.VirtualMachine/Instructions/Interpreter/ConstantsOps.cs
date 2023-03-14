@@ -7,57 +7,118 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
     public partial class JvmInterpreter
     {
         [Opcode(0x00, "nop")]
-        public void Nop(IJavaThread thread)
+        public Task Nop(IJavaThread thread)
         {
+            return Task.CompletedTask;
         }
 
         [Opcode(0x01, "aconst_null")]
-        public void AconstNull(IJavaThread thread) => thread.CurrentMethod.OperandStack.Push(null);
+        public Task AconstNull(IJavaThread thread)
+        {
+            thread.CurrentMethod.OperandStack.Push(null);
+            return Task.CompletedTask;
+        }
 
         [Opcode(0x02, "iconst_m1")]
-        public void IconstM1(IJavaThread thread) => thread.CurrentMethod.OperandStack.Push(-1);
+        public Task IconstM1(IJavaThread thread)
+        {
+            thread.CurrentMethod.OperandStack.Push(-1);
+            return Task.CompletedTask;
+        }
 
         [Opcode(0x03, "iconst_0")]
-        public void Iconst0(IJavaThread thread) => thread.CurrentMethod.OperandStack.Push(0);
+        public Task Iconst0(IJavaThread thread)
+        {
+            thread.CurrentMethod.OperandStack.Push(0);
+            return Task.CompletedTask;
+        }
 
         [Opcode(0x04, "iconst_1")]
-        public void Iconst1(IJavaThread thread) => thread.CurrentMethod.OperandStack.Push(1);
+        public Task Iconst1(IJavaThread thread)
+        {
+            thread.CurrentMethod.OperandStack.Push(1);
+            return Task.CompletedTask;
+        }
 
         [Opcode(0x05, "iconst_2")]
-        public void Iconst2(IJavaThread thread) => thread.CurrentMethod.OperandStack.Push(2);
+        public Task Iconst2(IJavaThread thread)
+        {
+            thread.CurrentMethod.OperandStack.Push(2);
+            return Task.CompletedTask;
+        }
 
         [Opcode(0x06, "iconst_3")]
-        public void Iconst3(IJavaThread thread) => thread.CurrentMethod.OperandStack.Push(3);
+        public Task Iconst3(IJavaThread thread)
+        {
+            thread.CurrentMethod.OperandStack.Push(3);
+            return Task.CompletedTask;
+        }
 
         [Opcode(0x07, "iconst_4")]
-        public void Iconst4(IJavaThread thread) => thread.CurrentMethod.OperandStack.Push(4);
+        public Task Iconst4(IJavaThread thread)
+        {
+            thread.CurrentMethod.OperandStack.Push(4);
+            return Task.CompletedTask;
+        }
 
         [Opcode(0x08, "iconst_5")]
-        public void Iconst5(IJavaThread thread) => thread.CurrentMethod.OperandStack.Push(5);
+        public Task Iconst5(IJavaThread thread)
+        {
+            thread.CurrentMethod.OperandStack.Push(5);
+            return Task.CompletedTask;
+        }
 
         [Opcode(0x09, "lconst_0")]
-        public void Lconst0(IJavaThread thread) => thread.CurrentMethod.OperandStack.Push(0L);
+        public Task Lconst0(IJavaThread thread)
+        {
+            thread.CurrentMethod.OperandStack.Push(0L);
+            return Task.CompletedTask;
+        }
 
         [Opcode(0x0a, "lconst_1")]
-        public void Lconst1(IJavaThread thread) => thread.CurrentMethod.OperandStack.Push(1L);
+        public Task Lconst1(IJavaThread thread)
+        {
+            thread.CurrentMethod.OperandStack.Push(1L);
+            return Task.CompletedTask;
+        }
 
         [Opcode(0x0b, "fconst_0")]
-        public void Fconst0(IJavaThread thread) => thread.CurrentMethod.OperandStack.Push(0F);
+        public Task Fconst0(IJavaThread thread)
+        {
+            thread.CurrentMethod.OperandStack.Push(0F);
+            return Task.CompletedTask;
+        }
 
         [Opcode(0x0c, "fconst_1")]
-        public void Fconst1(IJavaThread thread) => thread.CurrentMethod.OperandStack.Push(1F);
+        public Task Fconst1(IJavaThread thread)
+        {
+            thread.CurrentMethod.OperandStack.Push(1F);
+            return Task.CompletedTask;
+        }
 
         [Opcode(0x0d, "fconst_2")]
-        public void Fconst2(IJavaThread thread) => thread.CurrentMethod.OperandStack.Push(2F);
+        public Task Fconst2(IJavaThread thread)
+        {
+            thread.CurrentMethod.OperandStack.Push(2F);
+            return Task.CompletedTask;
+        }
 
         [Opcode(0x0e, "dconst_0")]
-        public void Dconst0(IJavaThread thread) => thread.CurrentMethod.OperandStack.Push(0D);
+        public Task Dconst0(IJavaThread thread)
+        {
+            thread.CurrentMethod.OperandStack.Push(0D);
+            return Task.CompletedTask;
+        }
 
         [Opcode(0x0f, "dconst_1")]
-        public void Dconst1(IJavaThread thread) => thread.CurrentMethod.OperandStack.Push(1D);
+        public Task Dconst1(IJavaThread thread)
+        {
+            thread.CurrentMethod.OperandStack.Push(1D);
+            return Task.CompletedTask;
+        }
 
         [Opcode(0x10, "bipush")]
-        public void Bipush(IJavaThread thread)
+        public Task Bipush(IJavaThread thread)
         {
             var value = thread.CurrentMethod.Code[thread.ProgramCounter++];
 
@@ -67,21 +128,23 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
                 : value;
 
             thread.CurrentMethod.OperandStack.Push(result);
+            return Task.CompletedTask;
         }
 
         [Opcode(0x11, "sipush")]
-        public void Sipush(IJavaThread thread)
+        public Task Sipush(IJavaThread thread)
         {
             var byte1 = thread.CurrentMethod.Code[thread.ProgramCounter++];
             var byte2 = thread.CurrentMethod.Code[thread.ProgramCounter++];
             var value = (short)(byte1 << 8) | (short)byte2;
 
             thread.CurrentMethod.OperandStack.Push(value);
+            return Task.CompletedTask;
         }
 
 
         [Opcode(0x12, "ldc")]
-        public void Ldc(IJavaThread thread)
+        public async Task Ldc(IJavaThread thread)
         {
             var index = thread.CurrentMethod.Code[thread.ProgramCounter++];
             var info = thread.CurrentMethod.CpInfo[index];
@@ -102,9 +165,7 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
                 case CONSTANT_StringInfo stringInfo:
                     {
                         var value = ((CONSTANT_Utf8Info)thread.CurrentMethod.CpInfo[stringInfo.StringIndex]).Utf8String;
-
-                        if (!_runtime.TryGet("java/lang/String", out var stringClass) || stringClass == null)
-                            throw new InvalidOperationException("Cannot resolve string class");
+                        var stringClass = await _runtime.GetClassAsync("java/lang/String") ?? throw new InvalidOperationException("Cannot resolve string class");
 
                         // set string value
                         stringClass.Fields["value:[C"] = value.ToCharArray();
@@ -116,7 +177,7 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
                         thread.CurrentMethod.OperandStack.Push(classRef);
 
                         // initialize class
-                        RunDefaultCtor(stringClass, thread, classRef);
+                        await RunDefaultCtorAsync(stringClass, thread, classRef);
                     }
                     break;
 
@@ -134,16 +195,16 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
         }
 
         [Opcode(0x13, "ldc_w")]
-        public void LdcW(IJavaThread thread)
+        public Task LdcW(IJavaThread thread)
         {
             var indexbyte1 = thread.CurrentMethod.Code[thread.ProgramCounter++];
             var indexbyte2 = thread.CurrentMethod.Code[thread.ProgramCounter++];
             var index = (indexbyte1 << 8) | indexbyte2;
-            Ldc(thread, index);
+            return Ldc(thread, index);
         }
 
         [Opcode(0x14, "ldc2_w")]
-        public void Ldc2w(IJavaThread thread)
+        public Task Ldc2w(IJavaThread thread)
         {
             var indexbyte1 = thread.CurrentMethod.Code[thread.ProgramCounter++];
             var indexbyte2 = thread.CurrentMethod.Code[thread.ProgramCounter++];
@@ -164,9 +225,10 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
                 default:
                     throw new NotImplementedException($"A symbolic reference to {info.GetType()}");
             }
+            return Task.CompletedTask;
         }
 
-        private static void Ldc(IJavaThread thread, int index)
+        private static Task Ldc(IJavaThread thread, int index)
         {
             var info = thread.CurrentMethod.CpInfo[index];
 
@@ -205,6 +267,8 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
                 default:
                     throw new ArgumentException("Bad info");
             }
+
+            return Task.CompletedTask;
         }
     }
 }

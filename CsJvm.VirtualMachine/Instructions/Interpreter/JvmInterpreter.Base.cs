@@ -1,5 +1,4 @@
 ﻿using CsJvm.Abstractions.Instructions;
-using CsJvm.Abstractions.Loader;
 using CsJvm.Abstractions.VirtualMachine;
 using CsJvm.Models;
 using CsJvm.Models.ClassFileFormat.ConstantPool;
@@ -13,9 +12,9 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
     public partial class JvmInterpreter : IOpcodes
     {
         /// <summary>
-        /// Jar loader
+        /// Jar executable loader
         /// </summary>
-        private readonly IJarLoader _loader;
+        private readonly IJavaExecutable _executable;
 
         /// <summary>
         /// Java runtime
@@ -39,9 +38,9 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
         /// <param name="runtime">Java runtime</param>
         /// <param name="natives">Native methods</param>
         /// <param name="heap">Heap</param>
-        public JvmInterpreter(IJarLoader loader, IJavaRuntime runtime, INativeMethodsProvider natives, IJavaHeap heap)
+        public JvmInterpreter(IJavaExecutable executable, IJavaRuntime runtime, INativeMethodsProvider natives, IJavaHeap heap)
         {
-            _loader = loader;
+            _executable = executable;
             _runtime = runtime;
             _natives = natives;
             _heap = heap;
@@ -53,13 +52,14 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
         /// <param name="className">Class name</param>
         /// <param name="javaClass">Resolved class</param>
         /// <returns><see langword="true"></see> if success; otherwise <see langword="false"></see></returns>
-        private bool TryResolveClass(string className, out JavaClass? javaClass)
+        private async Task<JavaClass?> ResolveClass(string className)
         {
-            if (_loader.TryGetClass(className, out javaClass) || _runtime.TryGet(className, out javaClass))
-                return true;
+            var javaClass = await _executable.GetClassAsync(className);
 
-            javaClass = null;
-            return false;
+            if (javaClass == null)
+                javaClass = await _runtime.GetClassAsync(className);
+
+            return javaClass;
         }
 
         /// <summary>
@@ -67,12 +67,12 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
         /// </summary>
         /// <param name="javaClass">Class to initialize</param>
         /// <param name="thread">Current thread</param>
-        private static void RunStaticCtor(JavaClass javaClass, IJavaThread thread)
+        private static Task RunStaticCtorAsync(JavaClass javaClass, IJavaThread thread)
         {
             if (javaClass.StaticInitialized ||
                 !javaClass.Methods.TryGetValue("<clinit>:()V", out var clinit) ||
                 clinit == null || clinit.CodeAttribute == null)
-                return;
+                return Task.CompletedTask;
 
             javaClass.StaticInitialized = true;
 
@@ -85,13 +85,13 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
             };
 
             var thread0 = new JavaThread(thread.Decoder, clinitFrame);
-            thread0.Run();
+            return thread0.RunAsync();
         }
 
-        private void RunDefaultCtor(JavaClass javaClass, IJavaThread thread, HeapClassRef classRef)
+        private Task RunDefaultCtorAsync(JavaClass javaClass, IJavaThread thread, HeapClassRef classRef)
         {
             if (javaClass.DefaulthInitialized || !javaClass.Methods.TryGetValue("<init>:()V", out var init) || init == null)
-                return;
+                return Task.CompletedTask;
 
             javaClass.DefaulthInitialized = true;
             var frame = new Frame
@@ -105,7 +105,7 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
             frame.LocalVariables[0] = classRef;
 
             var thread0 = new JavaThread(thread.Decoder, frame);
-            thread0.Run();
+            return thread0.RunAsync();
         }
 
         /// <summary>

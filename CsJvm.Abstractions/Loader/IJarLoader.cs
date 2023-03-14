@@ -2,6 +2,9 @@
 
 namespace CsJvm.Abstractions.Loader
 {
+    /// <summary>
+    /// Provides method to load JAR files
+    /// </summary>
     public interface IJarLoader : IDisposable
     {
         /// <summary>
@@ -13,13 +16,14 @@ namespace CsJvm.Abstractions.Loader
         /// Open specified JAR file (file handle keeps locked while application is using)
         /// </summary>
         /// <param name="path">Path to file</param>
-        bool TryOpen(string path);
+        /// <returns><see langword="true"></see> if java class found and opened; otherwise <see langword="false"></see></returns>
+        Task<bool> OpenAsync(string path);
 
         /// <summary>
         /// Loads specified class from JAR
         /// </summary>
         /// <param name="className">Class to load</param>
-        /// <returns><see langword="true"></see> if java class found and loaded; otherwise <see langword="false"></see></returns>
-        bool TryGetClass(string className, out JavaClass? javaClass);
+        /// <returns>Loaded class</returns>
+        Task<JavaClass?> GetClassAsync(string className);
     }
 }

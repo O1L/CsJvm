@@ -7,10 +7,14 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
     public partial class JvmInterpreter
     {
         [Opcode(0x57, "pop")]
-        public void Pop(IJavaThread thread) => thread.CurrentMethod.OperandStack.Pop();
+        public Task Pop(IJavaThread thread)
+        {
+            thread.CurrentMethod.OperandStack.Pop();
+            return Task.CompletedTask;
+        }
 
         [Opcode(0x58, "pop2")]
-        public void Pop2(IJavaThread thread)
+        public Task Pop2(IJavaThread thread)
         {
             // remove first value
             thread.CurrentMethod.OperandStack.Pop();
@@ -19,17 +23,20 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
             var value = thread.CurrentMethod.OperandStack.Peek();
             if (value is not long && value is not double)
                 thread.CurrentMethod.OperandStack.Pop();
+
+            return Task.CompletedTask;
         }
 
         [Opcode(0x59, "dup")]
-        public void Dup(IJavaThread thread)
+        public Task Dup(IJavaThread thread)
         {
             var value = thread.CurrentMethod.OperandStack.Peek();
             thread.CurrentMethod.OperandStack.Push(value);
+            return Task.CompletedTask;
         }
 
         [Opcode(0x5a, "dup_x1")]
-        public void DupX1(IJavaThread thread)
+        public Task DupX1(IJavaThread thread)
         {
             var value1 = thread.CurrentMethod.OperandStack.Pop();
             var value2 = thread.CurrentMethod.OperandStack.Pop();
@@ -37,20 +44,22 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
             thread.CurrentMethod.OperandStack.Push(value1);
             thread.CurrentMethod.OperandStack.Push(value2);
             thread.CurrentMethod.OperandStack.Push(value1);
+
+            return Task.CompletedTask;
         }
 
         [Opcode(0x5b, "dup_x2")]
-        public void DupX2(IJavaThread thread) => throw new NotImplementedException();
+        public Task DupX2(IJavaThread thread) => throw new NotImplementedException();
 
         [Opcode(0x5c, "dup2")]
-        public void Dup2(IJavaThread thread)
+        public Task Dup2(IJavaThread thread)
         {
             // Form 2
             if (!thread.CurrentMethod.OperandStack.Peek().IsCategory1())
             {
                 var value = thread.CurrentMethod.OperandStack.Peek();
                 thread.CurrentMethod.OperandStack.Push(value);
-                return;
+                return Task.CompletedTask;
             }
 
             // Form 1
@@ -61,10 +70,11 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
             thread.CurrentMethod.OperandStack.Push(value1);
             thread.CurrentMethod.OperandStack.Push(value2);
             thread.CurrentMethod.OperandStack.Push(value1);
+            return Task.CompletedTask;
         }
 
         [Opcode(0x5d, "dup2_x1")]
-        public void Dup2X1(IJavaThread thread)
+        public Task Dup2X1(IJavaThread thread)
         {
             var value1 = thread.CurrentMethod.OperandStack.Pop();
             var value2 = thread.CurrentMethod.OperandStack.Pop();
@@ -75,7 +85,7 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
                 thread.CurrentMethod.OperandStack.Push(value1);
                 thread.CurrentMethod.OperandStack.Push(value2);
                 thread.CurrentMethod.OperandStack.Push(value1);
-                return;
+                return Task.CompletedTask;
             }
 
             // Form 1
@@ -85,19 +95,21 @@ namespace CsJvm.VirtualMachine.Instructions.Interpreter
             thread.CurrentMethod.OperandStack.Push(value3);
             thread.CurrentMethod.OperandStack.Push(value2);
             thread.CurrentMethod.OperandStack.Push(value1);
+            return Task.CompletedTask;
         }
 
         [Opcode(0x5e, "dup2_x2")]
-        public void Dup2X2(IJavaThread thread) => throw new NotImplementedException();
+        public Task Dup2X2(IJavaThread thread) => throw new NotImplementedException();
 
         [Opcode(0x5f, "swap")]
-        public void Swap(IJavaThread thread)
+        public Task Swap(IJavaThread thread)
         {
             var value1 = thread.CurrentMethod.OperandStack.Pop();
             var value2 = thread.CurrentMethod.OperandStack.Pop();
 
             thread.CurrentMethod.OperandStack.Push(value1);
             thread.CurrentMethod.OperandStack.Push(value2);
+            return Task.CompletedTask;
         }
     }
 }
